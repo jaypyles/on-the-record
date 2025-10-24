@@ -1,6 +1,6 @@
-from contextlib import contextmanager
+from datetime import datetime
 
-from sqlalchemy import Column, Float, Integer, String, create_engine
+from sqlalchemy import Column, DateTime, Float, Integer, String, create_engine, func
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 Base = declarative_base()
@@ -16,6 +16,18 @@ class BandItemDB(Base):
     image_url = Column(String, nullable=False)
     genre = Column(String)
     format = Column(String)
+
+
+class ArticleDB(Base):
+    __tablename__ = "articles"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String, nullable=False)
+    subTitle = Column(Float, nullable=False)
+    author = Column(String)
+    createdAt = Column(DateTime, nullable=False, default=datetime.utcnow)
+    content = Column(String, nullable=False)
+    image = Column(String)
+    type = Column(String)
 
 
 DATABASE_URL = "sqlite:///users.db"

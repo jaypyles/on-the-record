@@ -4,6 +4,7 @@ import uuid
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from jose import jwt
+from on_the_record.articles import article_router
 from on_the_record.artists import artist_router
 from on_the_record.constants import BYPASS_VERIFY
 from on_the_record.sendgrid.sendgrid import SendGrid
@@ -20,6 +21,7 @@ v = Verify()
 app = FastAPI()
 
 app.include_router(artist_router)
+app.include_router(article_router)
 
 app.add_middleware(
     CORSMiddleware,
