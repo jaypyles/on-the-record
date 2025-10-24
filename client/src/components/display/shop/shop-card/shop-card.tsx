@@ -1,4 +1,5 @@
 import { ShopItem, ShopItemType } from "@/types/shop.types";
+import Link from "next/link";
 
 interface ShopItemProps {
   item: ShopItem;
@@ -6,7 +7,8 @@ interface ShopItemProps {
 
 export const ShopItemCard = ({ item }: ShopItemProps) => {
   return (
-    <div
+    <Link
+      href={`/shop/${item.id}`}
       className="flex flex-col bg-gray-50 rounded-xl overflow-hidden max-w-xs relative p-6
    cursor-pointer"
     >
@@ -31,6 +33,6 @@ export const ShopItemCard = ({ item }: ShopItemProps) => {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };

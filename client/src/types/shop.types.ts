@@ -5,6 +5,7 @@ export enum ShopItemType {
 }
 
 export type ShopItem = {
+  id: string
   title: string;
   price: number;
   artist: string;
