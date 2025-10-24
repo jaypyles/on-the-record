@@ -2,6 +2,7 @@ export enum ShopItemType {
   CD = "CD",
   VINYL = "Vinyl",
   SHIRT = "Shirt",
+  MERCH = "Merch",
 }
 
 export type ShopItem = {

@@ -1,4 +1,6 @@
+import { Twillio } from "@/lib/services";
 import { ShopItem, ShopItemType } from "@/types/shop.types";
+import { TrackingEvents } from "@/types/track.types";
 import Link from "next/link";
 
 interface ShopItemProps {
@@ -6,10 +8,14 @@ interface ShopItemProps {
 }
 
 export const ShopItemCard = ({ item }: ShopItemProps) => {
-  console.log({ item });
+  const onClick = () => {
+    Twillio.segment.track(TrackingEvents.CLICKED_SHOP_ITEM, item);
+  };
+
   return (
     <Link
       href={`/shop/${item.id}`}
+      onClick={onClick}
       className="flex flex-col bg-gray-50 rounded-xl overflow-hidden max-w-xs relative p-6
    cursor-pointer"
     >

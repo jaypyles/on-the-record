@@ -13,6 +13,8 @@ def get_artists(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
     artist: Optional[str] = Query(None),
+    type: Optional[str] = Query(None),
+    price: Optional[str] = Query(None),
 ):
     """
     Search artists with optional name filter and pagination.
@@ -21,6 +23,18 @@ def get_artists(
 
     if artist:
         query = query.filter(BandItemDB.band.ilike(f"%{artist}%"))
+
+    if type and type.lower() != "all":
+        query = query.filter(BandItemDB.item_type == type.lower())
+
+    if price:
+        try:
+            _min, _max = price.split("-")
+            _min = float(_min)
+            _max = float(_max)
+            query = query.filter(BandItemDB.price.between(_min, _max))
+        except ValueError:
+            pass
 
     offset = (page - 1) * size
     items = query.offset(offset).limit(size).all()

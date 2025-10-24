@@ -8,15 +8,19 @@ export const get = publicProcedure
       page: z.number().min(1).optional().default(1),
       size: z.number().min(1).max(100).optional().default(20),
       artist: z.string().optional(),
+      type: z.string().optional(),
+      price: z.string().optional(),
     })
   )
   .query(async ({ input }) => {
-    const { page, size, artist } = input;
+    const { page, size, artist, type, price } = input;
 
     const params = new URLSearchParams();
     params.append("page", page.toString());
     params.append("size", size.toString());
     if (artist) params.append("artist", artist);
+    if (type) params.append("type", type);
+    if (price) params.append("price", price);
 
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/artists?${params.toString()}`

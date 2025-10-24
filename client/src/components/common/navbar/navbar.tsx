@@ -68,13 +68,13 @@ export function Navbar() {
                 <ul className="grid w-[300px] gap-4">
                   <li>
                     <NavigationMenuLink asChild>
-                      <Link href="/shop?filter=cd">CDs</Link>
+                      <Link href="/shop?type=CD">CDs</Link>
                     </NavigationMenuLink>
                     <NavigationMenuLink asChild>
-                      <Link href="/shop?filter=vinyl">Vinyls</Link>
+                      <Link href="/shop?type=Vinyl">Vinyls</Link>
                     </NavigationMenuLink>
                     <NavigationMenuLink asChild>
-                      <Link href="/shop?filter=merch">Merch</Link>
+                      <Link href="/shop?type=Merch">Merch</Link>
                     </NavigationMenuLink>
                   </li>
                 </ul>
