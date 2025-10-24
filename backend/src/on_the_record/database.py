@@ -22,7 +22,7 @@ class ArticleDB(Base):
     __tablename__ = "articles"
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String, nullable=False)
-    subTitle = Column(Float, nullable=False)
+    subTitle = Column(String, nullable=False)
     author = Column(String)
     createdAt = Column(DateTime, nullable=False, default=datetime.utcnow)
     content = Column(String, nullable=False)

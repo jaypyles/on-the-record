@@ -26,20 +26,23 @@ export const get = publicProcedure
       `${process.env.NEXT_PUBLIC_API_URL}/artists?${params.toString()}`
     );
 
-    const data: ServerShopItem[] = await res.json();
+    const data: { items: ServerShopItem[]; total: number } = await res.json();
 
     if (!res.ok) {
       throw new Error((data as any).detail || "Failed to fetch artists");
     }
 
-    return data.map<ShopItem>((item) => ({
-      id: item.id.toString(),
-      artist: item.band,
-      title: item.title || "",
-      price: item.price,
-      type: item.item_type as ShopItemType,
-      url: item.image_url,
-      genre: item.genre || "",
-      format: item.format || "",
-    }));
+    return {
+      items: data.items.map<ShopItem>((item) => ({
+        id: item.id.toString(),
+        artist: item.band,
+        title: item.title || "",
+        price: item.price,
+        type: item.item_type as ShopItemType,
+        url: item.image_url,
+        genre: item.genre || "",
+        format: item.format || "",
+      })),
+      total: data.total,
+    };
   });

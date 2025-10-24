@@ -1,76 +1,95 @@
+import { CommonPagination } from "@/components/common";
+import { Twillio } from "@/lib/services";
+import { trpc } from "@/trpc/client";
 import { Article, ArticleType } from "@/types/article.types";
-import { useState } from "react";
+import { TrackingEvents } from "@/types/track.types";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
-export const ArticlesPage = () => {
-  const [selectedType, setSelectedType] = useState<ArticleType | "All">("All");
-  const [searchQuery, setSearchQuery] = useState("");
+type ArticlesPageProps = {
+  articles: Article[];
+  total: number;
+};
 
-  // Sample articles data - in a real app, this would come from an API
-  const articleList: Article[] = [
-    {
-      title: "Top 10 Albums of 2025",
-      subTitle: "A curated list of this year's best albums you shouldn't miss.",
-      image: "/images/carousel/carousel-2.jpg",
-      created: "10/12/25",
-      author: "Jayden Pyles",
-      type: ArticleType.NEWS,
-      href: "/articles/1",
-    },
-    {
-      title: "Rising Stars You Need to Know",
-      subTitle: "Discover new artists who are making waves in the music scene.",
-      image: "/images/carousel/carousel-3.jpg",
-      created: "10/12/25",
-      author: "Jayden Pyles",
-      type: ArticleType.NEWS,
-      href: "/articles/2",
-    },
-    {
-      title: "Vinyl Collector's Guide",
-      subTitle:
-        "Tips for building a vinyl collection that impresses every audiophile.",
-      image: "/images/carousel/carousel-4.jpg",
-      created: "10/12/25",
-      author: "Jayden Pyles",
-      type: ArticleType.RELEASE,
-      href: "/articles/3",
-    },
-    {
-      title: "New Album Release: Midnight Dreams",
-      subTitle:
-        "The latest album from indie sensation Luna Moon is finally here.",
-      image: "/images/carousel/carousel-1.jpg",
-      created: "10/11/25",
-      author: "Sarah Chen",
-      type: ArticleType.RELEASE,
-      href: "/articles/4",
-    },
-    {
-      title: "Music Industry Trends 2025",
-      subTitle:
-        "What's shaping the future of music production and distribution.",
-      image: "/images/carousel/carousel-5.jpg",
-      created: "10/10/25",
-      author: "Mike Rodriguez",
-      type: ArticleType.NEWS,
-      href: "/articles/5",
-    },
-  ];
+export const ArticlesPage = ({ articles, total }: ArticlesPageProps) => {
+  const pageSize = 8;
+  const router = useRouter();
+  const { type, query, page } = router.query;
 
-  const filteredArticles = articleList.filter((article) => {
-    const matchesType = selectedType === "All" || article.type === selectedType;
-    const matchesSearch =
-      searchQuery === "" ||
-      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.subTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.author.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesType && matchesSearch;
-  });
+  const [selectedType, setSelectedType] = useState<ArticleType | "All">(
+    (type || "All") as ArticleType
+  );
+  const [searchQuery, setSearchQuery] = useState((query as string) || "");
+  const [currentPage, setCurrentPage] = useState(
+    parseInt((page as string) || "1")
+  );
+
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
+
+  const { data, isLoading } = trpc.articleRouter.get.useQuery(
+    {
+      page: currentPage,
+      size: pageSize,
+      title: debouncedSearch || undefined,
+      type: selectedType,
+    },
+    {
+      placeholderData: (previousData: Article[] | undefined) =>
+        previousData || { items: articles, total },
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const totalPages = Math.ceil(data.total / pageSize);
+
+  const onClickArticle = (article: Article) => {
+    Twillio.segment.track(TrackingEvents.CLICKED_ARTICLE, article);
+    router.push(`/articles/${article.id}`);
+  };
+
+  const onClickFilter = (filterValue: ArticleType | "All") => {
+    setSelectedType(filterValue);
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      const params = new URLSearchParams();
+
+      if (selectedType !== "All") params.set("type", selectedType);
+      if (debouncedSearch) params.set("query", debouncedSearch);
+      if (currentPage > 1) params.set("page", currentPage.toString());
+
+      router.replace(`/articles?${params.toString()}`, undefined, {
+        shallow: true,
+      });
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [selectedType, debouncedSearch, currentPage]);
+
+  useEffect(() => {
+    if (type) setSelectedType(type as ArticleType);
+    else setSelectedType("All");
+  }, [type]);
+
+  useEffect(() => {
+    const pageFromQuery = parseInt((page as string) || "1");
+    setCurrentPage(pageFromQuery);
+  }, [page]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedSearch(searchQuery), 1000);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-8xl text-gray-900 mb-2 font-display">Articles</h1>
           <p className="text-gray-600">
@@ -80,14 +99,12 @@ export const ArticlesPage = () => {
         </div>
 
         <div className="flex gap-8">
-          {/* Left Sidebar - Filters */}
           <div className="w-64 shrink-0">
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Filters
               </h3>
 
-              {/* Search */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Search
@@ -113,12 +130,11 @@ export const ArticlesPage = () => {
                     placeholder="Search articles..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="block w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="block w-full pl-9 pr-3 py-2 text-sm border border-gray-300 text-black rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>
               </div>
 
-              {/* Category Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Category
@@ -129,7 +145,7 @@ export const ArticlesPage = () => {
                       type="radio"
                       name="category"
                       checked={selectedType === "All"}
-                      onChange={() => setSelectedType("All")}
+                      onChange={() => onClickFilter("All")}
                       className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
                     />
                     <span className="ml-2 text-sm text-gray-700">
@@ -141,7 +157,7 @@ export const ArticlesPage = () => {
                       type="radio"
                       name="category"
                       checked={selectedType === ArticleType.NEWS}
-                      onChange={() => setSelectedType(ArticleType.NEWS)}
+                      onChange={() => onClickFilter(ArticleType.NEWS)}
                       className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
                     />
                     <span className="ml-2 text-sm text-gray-700">News</span>
@@ -151,7 +167,7 @@ export const ArticlesPage = () => {
                       type="radio"
                       name="category"
                       checked={selectedType === ArticleType.RELEASE}
-                      onChange={() => setSelectedType(ArticleType.RELEASE)}
+                      onChange={() => onClickFilter(ArticleType.RELEASE)}
                       className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
                     />
                     <span className="ml-2 text-sm text-gray-700">Releases</span>
@@ -161,17 +177,40 @@ export const ArticlesPage = () => {
             </div>
           </div>
 
-          {/* Main Content - Articles List */}
           <div className="flex-1">
-            {filteredArticles.length > 0 ? (
-              <div className="space-y-6">
-                {filteredArticles.map((article, index) => (
+            {isLoading ? (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <svg
+                    className="mx-auto h-12 w-12 animate-spin"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Searching...
+                </h3>
+                <p className="text-gray-500">
+                  Finding articles that match your criteria.
+                </p>
+              </div>
+            ) : data.items && data.items.length > 0 ? (
+              <div className="flex flex-col space-y-6">
+                {data.items.map((article: Article) => (
                   <div
-                    key={index}
-                    className="bg-white rounded-lg shadow-sm border overflow-hidden"
+                    className="bg-white rounded-lg overflow-hidden cursor-pointer"
+                    onClick={() => onClickArticle(article)}
+                    key={article.id}
                   >
                     <div className="flex">
-                      {/* Article Image */}
                       <div className="w-48 h-32 shrink-0">
                         <img
                           src={article.image ?? ""}
@@ -180,7 +219,6 @@ export const ArticlesPage = () => {
                         />
                       </div>
 
-                      {/* Article Content */}
                       <div className="flex-1 p-6">
                         <h3 className="text-xl font-semibold text-gray-900 mb-2 hover:text-indigo-600 transition-colors">
                           <a href={article.href ?? "#"} className="block">
@@ -231,6 +269,14 @@ export const ArticlesPage = () => {
                 </p>
               </div>
             )}
+
+            <div className="mt-4 w-full flex justify-center">
+              <CommonPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
           </div>
         </div>
       </div>

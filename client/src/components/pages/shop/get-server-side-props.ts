@@ -5,7 +5,7 @@ import { GetServerSideProps } from "next";
 import SuperJSON from "superjson";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { query = "", price = "", type = "" } = ctx.query;
+  const { query = "", price = "", type = "", page = "1" } = ctx.query;
 
   const helpers = createServerSideHelpers({
     router: appRouter,
@@ -13,9 +13,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     transformer: SuperJSON,
   });
 
-  const items = await helpers.artistRouter.get.fetch({
-    page: 1,
-    size: 20,
+  const data = await helpers.artistRouter.get.fetch({
+    page: parseInt(page as string),
+    size: 12,
     artist: query as string,
     type: type as string,
     price: price as string,
@@ -23,7 +23,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   return {
     props: {
-      items,
+      items: data.items,
+      total: data.total,
     },
   };
 };

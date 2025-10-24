@@ -14,7 +14,7 @@ export const Shop = ({ artists }: ShopProps) => {
       artist: "",
     },
     {
-      initialData: artists,
+      initialData: { items: artists || [], total: artists?.length || 0 },
       staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
     }
@@ -25,8 +25,9 @@ export const Shop = ({ artists }: ShopProps) => {
       <h1 className="text-8xl text-black font-display mb-2">SHOP</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full">
-        {data?.map((item) => <ShopItemCard key={item.id} item={item} />) ||
-          "Loading..."}
+        {data?.items?.map((item) => (
+          <ShopItemCard key={item.id} item={item} />
+        )) || "Loading..."}
       </div>
     </section>
   );

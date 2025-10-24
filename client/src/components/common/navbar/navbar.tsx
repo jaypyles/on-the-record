@@ -34,27 +34,18 @@ export function Navbar() {
                 <ul className="grid w-[300px] gap-4">
                   <li>
                     <NavigationMenuLink asChild>
-                      <Link href="/articles?filter=new">
-                        <div className="font-medium">New</div>
+                      <Link href="/articles?type=News">
+                        <div className="font-medium">News</div>
                         <div className="text-muted-foreground">
                           Latest album drops, singles, and tour announcements.
                         </div>
                       </Link>
                     </NavigationMenuLink>
                     <NavigationMenuLink asChild>
-                      <Link href="/articles?filter=featured">
-                        <div className="font-medium">Featured</div>
+                      <Link href="/articles?type=Release">
+                        <div className="font-medium">Releases</div>
                         <div className="text-muted-foreground">
                           Spotlight on trending artists and must-read reviews.
-                        </div>
-                      </Link>
-                    </NavigationMenuLink>
-                    <NavigationMenuLink asChild>
-                      <Link href="/articles?filter=favorites">
-                        <div className="font-medium">Favorites</div>
-                        <div className="text-muted-foreground">
-                          Curated picks from our editors and community
-                          favorites.
                         </div>
                       </Link>
                     </NavigationMenuLink>
