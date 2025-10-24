@@ -1,4 +1,6 @@
+import { Twillio } from "@/lib/services";
 import { Article } from "@/types/article.types";
+import { TrackingEvents } from "@/types/track.types";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -7,9 +9,14 @@ interface SubFeatureProps {
 }
 
 export const SubFeature = ({ article }: SubFeatureProps) => {
+  const onClick = () => {
+    Twillio.segment.track(TrackingEvents.CLICKED_ARTICLE, article);
+  };
+
   return (
     <Link
       href={article.href ?? ""}
+      onClick={onClick}
       className="flex flex-col bg-gray-50 p-6 rounded-xl max-w-sm relative
   not-first:before:content-[''] not-first:before:absolute not-first:before:top-0 
   not-first:before:left-0 not-first:before:w-px not-first:before:h-full 

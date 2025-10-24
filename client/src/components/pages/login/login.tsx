@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Twillio } from "@/lib/services";
 import { cn } from "@/lib/utils";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -13,6 +14,7 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [confirm, setConfirm] = useState("");
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,12 +36,19 @@ export default function AuthPage() {
       password,
       remember,
     });
+
     setLoading(false);
 
     console.log({ res });
 
     if (!res) return setError("Unexpected error.");
     if (res.error) return setError(res.error);
+
+    const session = await getSession();
+
+    if (session) {
+      Twillio.segment.identifyUser(session);
+    }
 
     router.push("/");
   };
@@ -62,7 +71,7 @@ export default function AuthPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, name }),
       });
 
       const data = await res.json();
@@ -170,6 +179,19 @@ export default function AuthPage() {
             </form>
           ) : (
             <form onSubmit={handleRegister} className="flex flex-col gap-4">
+              <div>
+                <Label htmlFor="name" className="mb-2">
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="John Doe"
+                  required
+                />
+              </div>
               <div>
                 <Label htmlFor="email" className="mb-2">
                   Email

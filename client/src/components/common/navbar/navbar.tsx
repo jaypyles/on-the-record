@@ -97,7 +97,7 @@ export function Navbar() {
       <div className="flex items-center space-x-2">
         {session ? (
           <>
-            <span className="text-white text-sm">{session.user?.email}</span>
+            <span className="text-white text-sm">{session.user?.name}</span>
             <Button
               variant="outline"
               size="sm"
