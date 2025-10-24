@@ -1,4 +1,4 @@
 import { router } from "@/server/trpc";
-import { login } from "./login";
+import { verify } from "./verify";
 
-export const authRouter = router({ login });
+export const authRouter = router({ verify });

@@ -2,14 +2,26 @@
 name = "backend"
 version = "0.1.0"
 description = "Default template for PDM package"
-authors = [
-    {name = "Jayden Pyles", email = "jpylesbusiness@gmail.com"},
+authors = [{ name = "Jayden Pyles", email = "jpylesbusiness@gmail.com" }]
+dependencies = [
+    "fastapi>=0.120.0",
+    "pydantic>=2.12.3",
+    "jose>=1.0.0",
+    "passlib>=1.7.4",
+    "python-jose[cryptography]>=3.5.0",
+    "uvicorn>=0.38.0",
+    "sendgrid>=6.12.5",
+    "python-dotenv>=1.1.1",
+    "twilio>=9.8.4",
+    "sqlalchemy>=2.0.44",
 ]
-dependencies = ["fastapi>=0.120.0", "pydantic>=2.12.3", "jose>=1.0.0", "passlib>=1.7.4", "python-jose[cryptography]>=3.5.0", "uvicorn>=0.38.0", "sendgrid>=6.12.5", "python-dotenv>=1.1.1"]
 requires-python = "==3.12.*"
 readme = "README.md"
-license = {text = "MIT"}
+license = { text = "MIT" }
 
 
 [tool.pdm]
 distribution = false
+
+[tool.pdm.scripts]
+insert-data = { cmd = "python -m on_the_record.scripts.insert_data", env = { PYTHONPATH = "src" } }

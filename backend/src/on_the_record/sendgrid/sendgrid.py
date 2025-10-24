@@ -1,26 +1,23 @@
 from on_the_record.constants import FROM_EMAIL, SENDGRID_API_KEY
-from sendgrid import Mail, MailSettings, SandBoxMode, SendGridAPIClient
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Content, Email, Mail, To
 
 
 class SendGrid:
     def __init__(self) -> None:
-        self.settings = MailSettings()
-        self.settings.sandbox_mode = SandBoxMode(enable=True)
         self.key = SENDGRID_API_KEY
         self.from_mail = FROM_EMAIL
         self.client = SendGridAPIClient(self.key)
 
     def create_mail(self):
         # Create the message
-        message = Mail(
-            from_email=self.from_mail,
-            to_emails="test@mailinator.com",
-            subject="SendGrid Sandbox Test",
-            plain_text_content="This is a sandbox test",
-            html_content="<strong>This is a sandbox test</strong>",
-        )
+        from_email = Email("verify@readontherecord.com")
+        to_email = To("jaydenpyles0524@gmail.com")
+        subject = "Sending with SendGrid is Fun"
+        content = Content("text/plain", "and easy to do anywhere, even with Python")
+        mail = Mail(from_email, to_email, subject, content)
 
-        message.mail_settings = self.settings
-        response = self.client.send(message)
-        print("Status code:", response.status_code)
+        mail_json = mail.get()
+
+        response = self.client.send(mail_json)
         return response

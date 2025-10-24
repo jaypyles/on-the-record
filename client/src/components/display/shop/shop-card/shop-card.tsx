@@ -6,6 +6,7 @@ interface ShopItemProps {
 }
 
 export const ShopItemCard = ({ item }: ShopItemProps) => {
+  console.log({ item });
   return (
     <Link
       href={`/shop/${item.id}`}

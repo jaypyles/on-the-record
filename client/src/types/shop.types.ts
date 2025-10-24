@@ -5,9 +5,23 @@ export enum ShopItemType {
 }
 
 export type ShopItem = {
-  id: string
+  id: string;
+  artist: string;
   title: string;
   price: number;
-  artist: string;
   type: ShopItemType;
+  url: string;
+  genre: string;
+  format: string;
+};
+
+export type ServerShopItem = {
+  id: number;
+  band: string;
+  title?: string;
+  price: number;
+  item_type: string;
+  image_url: string;
+  genre?: string;
+  format?: string;
 };

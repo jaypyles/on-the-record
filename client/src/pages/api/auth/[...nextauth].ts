@@ -19,6 +19,8 @@ export const authOptions: AuthOptions = {
 
         const user = await res.json();
 
+        if (!user.verified) return { verified: false, email: user.email };
+
         if (res.ok && user) {
           return user;
         }
@@ -38,6 +40,7 @@ export const authOptions: AuthOptions = {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
+        token.verified = user.verified;
       }
       return token;
     },
@@ -47,6 +50,7 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
         session.user.email = token.email as string;
+        session.user.verified = token.verified as boolean;
       }
       return session;
     },
