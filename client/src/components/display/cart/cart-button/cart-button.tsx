@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
-import { trpc } from "@/trpc/client";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
 export function CartButton() {
@@ -8,6 +8,12 @@ export function CartButton() {
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+
+  const handleCheckoutClick = async () => {
+    router.push("/checkout");
+    setOpen(false);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -76,7 +82,7 @@ export function CartButton() {
                 <Button
                   variant="default"
                   size="sm"
-                  onClick={() => alert("Go to checkout")}
+                  onClick={handleCheckoutClick}
                 >
                   Checkout
                 </Button>
