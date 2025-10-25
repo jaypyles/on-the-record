@@ -5,7 +5,7 @@ import SuperJSON from "superjson";
 
 export const createContext = async ({ req, res }: any) => {
   const session = await getServerSession(req, res, authOptions);
-  return { session };
+  return { session, forwardHeaders: {} as Record<string, string> };
 };
 
 type Context = Awaited<ReturnType<typeof createContext>>;
@@ -21,4 +21,17 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     throw new Error("UNAUTHORIZED");
   }
   return next({ ctx: { session: ctx.session } });
+});
+
+export const autoForwardProcedure = t.procedure.use(({ ctx, next }) => {
+  console.log("session");
+  console.log(ctx.session);
+  console.log("its it");
+  if (ctx.session?.user?.jwt) {
+    ctx.forwardHeaders = { Authorization: `Bearer ${ctx.session.user.jwt}` };
+  } else {
+    ctx.forwardHeaders = {};
+  }
+
+  return next({ ctx });
 });

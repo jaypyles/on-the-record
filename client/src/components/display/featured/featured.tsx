@@ -11,7 +11,7 @@ interface FeaturedProps {
 
 export const Featured = ({ article }: FeaturedProps) => {
   return (
-    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16 bg-gray-50 p-6 rounded-xl">
+    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16 bg-gray-50 p-6 rounded-xl transition-transform duration-200 ease-in-out transform hover:scale-105 cursor-pointer hover:bg-gray-100">
       {/* Text Content */}
       <div className="flex-1 flex flex-col justify-center">
         {/* Featured label + bar */}

@@ -4,23 +4,27 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { GetServerSideProps } from "next";
 import SuperJSON from "superjson";
 
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth";
+
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+
   const helpers = createServerSideHelpers({
     router: appRouter,
     ctx: await createContext(ctx),
     transformer: SuperJSON,
   });
 
-  const data = await helpers.artistRouter.get.fetch({
-    page: 1,
-    size: 6,
-    artist: "",
-  });
+  console.log("SESSIOIN TIME");
+  console.log({ session });
+
+  const data = await helpers.artistRouter.recentlyViewed.fetch();
 
   return {
     props: {
       artists: data.items,
-      total: data.total,
+      total: 0,
     },
   };
 };

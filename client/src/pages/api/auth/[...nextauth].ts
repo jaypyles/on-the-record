@@ -36,11 +36,14 @@ export const authOptions: AuthOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
+      console.log(token);
+      console.log({ user });
       if (user) {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
         token.verified = user.verified;
+        token.raw = user.token;
       }
       return token;
     },
@@ -51,6 +54,7 @@ export const authOptions: AuthOptions = {
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.verified = token.verified as boolean;
+        session.user.jwt = token.raw as string;
       }
       return session;
     },

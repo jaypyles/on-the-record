@@ -1,5 +1,6 @@
 import { trpc } from "@/trpc/client";
 import { ShopItem } from "@/types/shop.types";
+import { useEffect } from "react";
 import { ShopItemCard } from "./shop-card";
 
 type ShopProps = {
@@ -7,18 +8,17 @@ type ShopProps = {
 };
 
 export const Shop = ({ artists }: ShopProps) => {
-  const { data } = trpc.artistRouter.get.useQuery(
-    {
-      page: 1,
-      size: 20,
-      artist: "",
-    },
-    {
-      initialData: { items: artists || [], total: artists?.length || 0 },
-      staleTime: 1000 * 60 * 5,
-      refetchOnWindowFocus: false,
-    }
-  );
+  // NOTE: this is really odd behavior, its because the old data is cached and then you login
+  // so it has old cached data from the guest user, if I had more time I would probably fix this.
+
+  const utils = trpc.useContext();
+  const { data } = trpc.artistRouter.recentlyViewed.useQuery(undefined, {
+    initialData: { items: artists || [], total: artists?.length || 0 },
+  });
+
+  useEffect(() => {
+    utils.artistRouter.recentlyViewed.invalidate();
+  }, [utils]);
 
   return (
     <section className="min-h-screen flex flex-col items-start mt-32 bg-gray-50 px-8 pb-16">

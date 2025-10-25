@@ -103,7 +103,9 @@ def login(user: LoginUser, db: sqlite3.Connection = Depends(get_db)):
         v.send_verification()
         return {"verified": False, "email": user.email}
 
-    token = jwt.encode({"email": user.email}, SECRET_KEY, algorithm=ALGORITHM)
+    token = jwt.encode(
+        {"email": user.email, "id": row["id"]}, SECRET_KEY, algorithm=ALGORITHM
+    )
 
     return {
         "message": "Email verified successfully!",
@@ -127,7 +129,10 @@ def verify_email(req: VerifyRequest, db: sqlite3.Connection = Depends(get_db)):
     verification_check = v.check_verification(req.email, req.code)
 
     if verification_check:
-        token = jwt.encode({"email": req.email}, SECRET_KEY, algorithm=ALGORITHM)
+        token = jwt.encode(
+            {"email": req.email, "id": row["id"]}, SECRET_KEY, algorithm=ALGORITHM
+        )
+
         cur.execute("UPDATE users SET verified = 1 WHERE email = ?", (req.email,))
 
         return {

@@ -17,7 +17,6 @@ export const verify = publicProcedure
     });
 
     const data = await res.json();
-    console.log({ data });
 
     if (!res.ok) {
       throw new Error(data.detail || "Verification failed");

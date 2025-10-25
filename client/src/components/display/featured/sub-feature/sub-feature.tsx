@@ -20,7 +20,7 @@ export const SubFeature = ({ article }: SubFeatureProps) => {
       className="flex flex-col bg-gray-50 p-6 rounded-xl max-w-sm relative
   not-first:before:content-[''] not-first:before:absolute not-first:before:top-0 
   not-first:before:left-0 not-first:before:w-px not-first:before:h-full 
-  not-first:before:bg-gray-300"
+  not-first:before:bg-gray-300 transition-transform duration-200 ease-in-out transform hover:scale-105 hover:bg-gray-100"
     >
       {/* Featured label + bar */}
       <div className="flex items-center gap-3 mb-4">
