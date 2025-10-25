@@ -93,9 +93,6 @@ def login(user: LoginUser, db: sqlite3.Connection = Depends(get_db)):
     cur = db.execute("SELECT * FROM users WHERE email = ?", (user.email,))
     row = cur.fetchone()
 
-    print(user)
-    print(dict(row))
-
     if not row or not bcrypt.verify(user.password, row["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 

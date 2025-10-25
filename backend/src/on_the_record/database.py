@@ -97,7 +97,6 @@ _pg_pool: asyncpg.pool.Pool | None = None
 
 async def get_pg_pool() -> asyncpg.pool.Pool:
     global _pg_pool
-    print(PG_USER, PG_PASSWORD, PG_DB, PG_PORT, PG_HOST)
     if not _pg_pool:
         _pg_pool = await asyncpg.create_pool(
             user=PG_USER,
