@@ -35,7 +35,7 @@ class Segment:
     ):
         analytics.track(
             user_id=user_id,
-            event=TrackingEvent.REMOVE_FROM_CART.value,
+            event=TrackingEvent.CHECKOUT.value,
             properties={"total": total, "items": items},
             anonymous_id=anonymous_id,
         )

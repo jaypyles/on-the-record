@@ -71,6 +71,17 @@ class CartDB(Base):
     user = relationship("UserDB", backref="cart")
 
 
+class OrderDB(Base):
+    __tablename__ = "orders"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
+    session_id = Column(String, nullable=True)
+    items = Column(MutableList.as_mutable(JSON), nullable=False, default=list)
+    total = Column(Float, nullable=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+
 DATABASE_URL = "sqlite:///users.db"
 engine = create_engine(
     DATABASE_URL, connect_args={"check_same_thread": False}

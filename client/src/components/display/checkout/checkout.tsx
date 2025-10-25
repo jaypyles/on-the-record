@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { CheckoutFormData } from "@/types/checkout.types";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 type ContactInformationProps = {
   formData: CheckoutFormData;
@@ -237,6 +237,7 @@ type OrderSummaryProps = {
   total: number;
   handleSubmit: (e: React.FormEvent) => void;
   isLoading?: boolean;
+  success: boolean;
 };
 
 export const OrderSummary = ({
@@ -244,7 +245,42 @@ export const OrderSummary = ({
   total,
   handleSubmit,
   isLoading = false,
+  success = false,
 }: OrderSummaryProps) => {
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  if (!isHydrated) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-normal font-display text-3xl">
+              Order Summary
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            </div>
+            <Button
+              className="w-full h-13 text-lg mt-4 hover:bg-indigo-400"
+              disabled
+            >
+              Loading...
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -310,12 +346,14 @@ export const OrderSummary = ({
           <Button
             onClick={handleSubmit}
             className="w-full h-13 text-lg mt-4 hover:bg-indigo-400"
-            disabled={cart.length === -1 || isLoading}
+            disabled={cart.length === 0 || isLoading}
           >
             {isLoading
               ? "Processing..."
+              : success
+              ? "Checkout was successful. Sending you back home."
               : `Place Order - $${
-                  cart.length > -1 ? (total * 1.08).toFixed(2) : "0.00"
+                  cart.length > 0 ? (total * 1.08).toFixed(2) : "0.00"
                 }`}
           </Button>
         </CardContent>

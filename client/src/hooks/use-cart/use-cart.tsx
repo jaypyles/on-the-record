@@ -5,6 +5,8 @@ import { ShopItem } from "@/types/shop.types";
 
 export const useCart = () => {
   const { cart, removeItem, total, clear, add, load } = useCartContext();
+
+  const checkoutMutation = trpc.cartRouter.checkout.useMutation();
   const addMutation = trpc.cartRouter.add.useMutation();
   const removeFromCartMutation = trpc.cartRouter.remove.useMutation();
   const clearCartMutation = trpc.cartRouter.clear.useMutation();
@@ -29,6 +31,10 @@ export const useCart = () => {
     load(items);
   };
 
+  const onCheckout = () => {
+    checkoutMutation.mutate();
+  };
+
   return {
     onRemoveFromCart,
     onClearCart,
@@ -38,5 +44,6 @@ export const useCart = () => {
     clear,
     getCartQuery,
     loadCart,
+    onCheckout,
   };
 };

@@ -45,7 +45,7 @@ export const ShopItemCard = ({ item }: ShopItemProps) => {
         </div>
       </div>
       <Button
-        className="cursor-pointer"
+        className="cursor-pointer hover:bg-indigo-400"
         onClick={(e) => {
           e.preventDefault();
           onAddToCart(item);

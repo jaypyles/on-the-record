@@ -1,10 +1,12 @@
 import { Checkout } from "@/components/display/checkout";
-import { useCart } from "@/contexts/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import type { CheckoutFormData } from "@/types/checkout.types";
+import { useRouter } from "next/router";
 import { ChangeEvent, useState } from "react";
 
 export const CheckoutPage = () => {
-  const { cart, total } = useCart();
+  const router = useRouter();
+  const { cart, total, onCheckout, clear } = useCart();
   const [formData, setFormData] = useState<CheckoutFormData>({
     email: "",
     firstName: "",
@@ -20,6 +22,9 @@ export const CheckoutPage = () => {
     nameOnCard: "",
   });
 
+  const [success, setSuccess] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +35,20 @@ export const CheckoutPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
+    try {
+      await onCheckout();
+      setSuccess(true);
+      setIsLoading(false);
+
+      setTimeout(async () => {
+        await router.push("/");
+        clear();
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -65,6 +84,7 @@ export const CheckoutPage = () => {
             total={total}
             handleSubmit={handleSubmit}
             isLoading={isLoading}
+            success={success}
           />
         </div>
       </div>

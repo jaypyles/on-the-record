@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from on_the_record.auth.auth import AuthHelper
-from on_the_record.database import BandItemDB, CartDB, get_db
+from on_the_record.database import BandItemDB, CartDB, OrderDB, get_db
 from on_the_record.factories.database_factory import DatabaseFactory
 from on_the_record.segment import Segment
 from sqlalchemy.exc import IdentifierError
@@ -184,9 +184,19 @@ def checkout_cart(
     )
 
     cart.items = []
-    db.commit()
 
     session_id = request.cookies.get("session_id")
+
+    order = OrderDB(
+        user_id=user["id"] if user else None,
+        session_id=session_id,
+        items=cart.items,
+        total=total,
+    )
+
+    db.add(order)
+    db.commit()
+
     Segment.track_checkout(
         user["id"] if user else None,
         total,
