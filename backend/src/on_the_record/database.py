@@ -1,10 +1,21 @@
 import sqlite3
+import uuid
 from datetime import datetime
 
 import asyncpg
 from on_the_record.constants import PG_DB, PG_HOST, PG_PASSWORD, PG_PORT, PG_USER
-from sqlalchemy import Column, DateTime, Float, Integer, String, create_engine
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlalchemy import (
+    JSON,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    create_engine,
+)
+from sqlalchemy.ext.mutable import MutableList
+from sqlalchemy.orm import Session, declarative_base, relationship, sessionmaker
 
 Base = declarative_base()
 
@@ -45,7 +56,19 @@ class UserDB(Base):
     verified = Column(Integer, nullable=False, default=0)
 
     def __repr__(self):
+
         return f"<User(id={self.id}, email={self.email}, name={self.name})>"
+
+
+class CartDB(Base):
+    __tablename__ = "carts"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
+    session_id = Column(String, unique=True, nullable=True)
+    items = Column(MutableList.as_mutable(JSON), nullable=False, default=list)
+
+    user = relationship("UserDB", backref="cart")
 
 
 DATABASE_URL = "sqlite:///users.db"

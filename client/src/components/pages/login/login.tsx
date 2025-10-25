@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCart } from "@/hooks/use-cart";
 import { Twillio } from "@/lib/services";
 import { cn } from "@/lib/utils";
 import { getSession, signIn } from "next-auth/react";
@@ -21,6 +22,8 @@ export default function AuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState<boolean>(false);
+
+  const { getCartQuery, loadCart } = useCart();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +58,10 @@ export default function AuthPage() {
         return;
       }
 
-      Twillio.segment.identifyUser(session);
+      const { data } = await getCartQuery.refetch();
+      loadCart(data.items);
+
+      Twillio.segment.identifyUser(session, Twillio.segment.getAnonymousId());
     }
 
     router.push("/");

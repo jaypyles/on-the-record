@@ -1,9 +1,9 @@
 from typing import Optional
 
 import jwt
-from fastapi import Header, HTTPException
+from fastapi import Depends, Header, HTTPException
 from on_the_record.constants import ALGORITHM, SECRET_KEY
-from on_the_record.database import UserDB
+from on_the_record.database import UserDB, get_db
 from sqlalchemy.orm import Session
 
 
@@ -39,3 +39,32 @@ class AuthHelper:
             raise HTTPException(status_code=401, detail="Token expired")
         except jwt.InvalidTokenError:
             raise HTTPException(status_code=401, detail="Invalid token")
+
+    @staticmethod
+    async def get_current_user(
+        db: Session = Depends(get_db),
+        authorization: Optional[str] = Header(None),
+    ) -> dict:
+        if not authorization:
+            raise HTTPException(status_code=401, detail="Authorization header missing")
+
+        auth = AuthHelper(db)
+        user = auth.get_user_from_jwt(authorization)
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        return user
+
+    @staticmethod
+    async def get_optional_current_user(
+        db: Session = Depends(get_db),
+        authorization: Optional[str] = Header(None),
+    ) -> dict:
+        auth = AuthHelper(db)
+
+        try:
+            user = auth.get_user_from_jwt(authorization)
+        except jwt.InvalidTokenError:
+            return None
+
+        return user

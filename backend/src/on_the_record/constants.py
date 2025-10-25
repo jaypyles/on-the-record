@@ -7,6 +7,7 @@ load_dotenv()
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "")
 FROM_EMAIL = os.getenv("EMAIL_FROM", "")
 
+SEGMENT_WRITE_TOKEN = os.getenv("SEGMENT_WRITE_TOKEN", "")
 ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "")
 AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
 SERVICE_SID = os.getenv("VERIFY_SERVICE_SID", "")

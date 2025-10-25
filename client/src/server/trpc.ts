@@ -1,11 +1,22 @@
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { initTRPC } from "@trpc/server";
+import cookie from "cookie";
 import { getServerSession } from "next-auth";
 import SuperJSON from "superjson";
 
 export const createContext = async ({ req, res }: any) => {
   const session = await getServerSession(req, res, authOptions);
-  return { session, forwardHeaders: {} as Record<string, string> };
+
+  const cookies = req.headers.cookie ? cookie.parse(req.headers.cookie) : {};
+  let sessionId = cookies["session_id"];
+
+  console.log({ sessionId });
+
+  return {
+    session,
+    sessionId,
+    forwardHeaders: {} as Record<string, string>,
+  };
 };
 
 type Context = Awaited<ReturnType<typeof createContext>>;
@@ -24,9 +35,6 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 });
 
 export const autoForwardProcedure = t.procedure.use(({ ctx, next }) => {
-  console.log("session");
-  console.log(ctx.session);
-  console.log("its it");
   if (ctx.session?.user?.jwt) {
     ctx.forwardHeaders = { Authorization: `Bearer ${ctx.session.user.jwt}` };
   } else {

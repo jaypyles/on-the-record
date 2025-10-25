@@ -1,8 +1,8 @@
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
+import { CartButton } from "@/components/display/cart";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -11,14 +11,20 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { useCart } from "@/hooks/use-cart";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 export function Navbar() {
   const isMobile = useIsMobile();
   const { data: session } = useSession();
+  const { clear } = useCart();
+
+  const onSignOut = () => {
+    clear();
+    signOut({ callbackUrl: "/" });
+  };
 
   return (
-    <header className="fixed top-0 left-0 w-full h-[48px] bg-black z-50 flex items-center px-4">
+    <header className="fixed top-0 left-0 w-full h-[48px] bg-black z-30 flex items-center px-4">
       <div className="shrink-0">
         <Link href="/" className="text-white font-bold">
           HOME
@@ -53,6 +59,7 @@ export function Navbar() {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
+
             <NavigationMenuItem className="hidden md:block">
               <NavigationMenuTrigger>Shop</NavigationMenuTrigger>
               <NavigationMenuContent>
@@ -71,11 +78,13 @@ export function Navbar() {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
+
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link href="/about-us">About Us</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
+
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link href="/contact">Contact</Link>
@@ -89,18 +98,22 @@ export function Navbar() {
         {session ? (
           <>
             <span className="text-white text-sm">{session.user?.name}</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => signOut({ callbackUrl: "/" })}
-            >
+
+            <div className="relative overflow-visible">
+              <CartButton />
+            </div>
+
+            <Button variant="outline" size="sm" onClick={onSignOut}>
               Sign out
             </Button>
           </>
         ) : (
-          <Link href="/login" className="text-white text-sm hover:underline">
-            Sign in / Register
-          </Link>
+          <>
+            <CartButton />
+            <Link href="/login" className="text-white text-sm hover:underline">
+              Sign in / Register
+            </Link>
+          </>
         )}
       </div>
     </header>

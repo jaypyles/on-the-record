@@ -16,9 +16,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     transformer: SuperJSON,
   });
 
-  console.log("SESSIOIN TIME");
-  console.log({ session });
-
   const data = await helpers.artistRouter.recentlyViewed.fetch();
 
   return {

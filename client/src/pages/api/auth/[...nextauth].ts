@@ -10,10 +10,14 @@ export const authOptions: AuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            cookie: req.headers?.cookie,
+          },
+          credentials: "include",
           body: JSON.stringify(credentials),
         });
 
@@ -36,8 +40,6 @@ export const authOptions: AuthOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
-      console.log(token);
-      console.log({ user });
       if (user) {
         token.id = user.id;
         token.name = user.name;

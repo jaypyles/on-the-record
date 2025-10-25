@@ -1,16 +1,22 @@
 import sqlite3
 import uuid
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from jose import jwt
 from on_the_record.articles import article_router
 from on_the_record.artists import artist_router
+from on_the_record.cart import cart_router
+from on_the_record.cart.helper import CartHelper
 from on_the_record.constants import BYPASS_VERIFY
+from on_the_record.database import UserDB
+from on_the_record.database import get_db as get_alc_db
 from on_the_record.sendgrid.sendgrid import SendGrid
+from on_the_record.session import session_router
 from on_the_record.verify.verify import Verify
 from passlib.hash import bcrypt
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 SECRET_KEY = "supersecret"
 ALGORITHM = "HS256"
@@ -22,6 +28,8 @@ app = FastAPI()
 
 app.include_router(artist_router)
 app.include_router(article_router)
+app.include_router(cart_router)
+app.include_router(session_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -89,19 +97,24 @@ def register(user: RegisterUser, db: sqlite3.Connection = Depends(get_db)):
 
 
 @app.post("/login")
-def login(user: LoginUser, db: sqlite3.Connection = Depends(get_db)):
-    cur = db.execute("SELECT * FROM users WHERE email = ?", (user.email,))
-    row = cur.fetchone()
+def login(user: LoginUser, request: Request, db: Session = Depends(get_alc_db)):
+    user_obj = db.query(UserDB).filter(UserDB.email == user.email).one()
 
-    if not row or not bcrypt.verify(user.password, row["password"]):
+    if not user_obj or not bcrypt.verify(user.password, user_obj.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    if not row["verified"] and not BYPASS_VERIFY:
+    if not user_obj.verified and not BYPASS_VERIFY:
         v.send_verification()
         return {"verified": False, "email": user.email}
 
+    user_id = user_obj.id
+    session_id = request.cookies.get("session_id")
+
+    if session_id:
+        CartHelper.merge_carts(db, session_id, user_id)
+
     token = jwt.encode(
-        {"email": user.email, "id": row["id"]}, SECRET_KEY, algorithm=ALGORITHM
+        {"email": user.email, "id": user_id}, SECRET_KEY, algorithm=ALGORITHM
     )
 
     return {
@@ -109,8 +122,8 @@ def login(user: LoginUser, db: sqlite3.Connection = Depends(get_db)):
         "success": True,
         "token": token,
         "email": user.email,
-        "name": row["name"],
-        "id": row["id"],
+        "name": user_obj.name,
+        "id": user_id,
         "verified": True,
     }
 

@@ -15,6 +15,7 @@ dependencies = [
     "twilio>=9.8.4",
     "sqlalchemy>=2.0.44",
     "asyncpg>=0.30.0",
+    "segment-analytics-python>=2.3.4",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"

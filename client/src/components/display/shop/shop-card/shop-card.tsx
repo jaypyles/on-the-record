@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { useCart } from "@/hooks/use-cart";
 import { Twillio } from "@/lib/services";
 import { ShopItem, ShopItemType } from "@/types/shop.types";
 import { TrackingEvents } from "@/types/track.types";
@@ -8,6 +10,8 @@ interface ShopItemProps {
 }
 
 export const ShopItemCard = ({ item }: ShopItemProps) => {
+  const { onAddToCart } = useCart();
+
   const onClick = () => {
     Twillio.segment.track(TrackingEvents.CLICKED_SHOP_ITEM, item);
   };
@@ -40,6 +44,15 @@ export const ShopItemCard = ({ item }: ShopItemProps) => {
           </span>
         </div>
       </div>
+      <Button
+        className="cursor-pointer"
+        onClick={(e) => {
+          e.preventDefault();
+          onAddToCart(item);
+        }}
+      >
+        Add to Cart
+      </Button>
     </Link>
   );
 };

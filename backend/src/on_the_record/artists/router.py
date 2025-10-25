@@ -78,8 +78,17 @@ async def recently_viewed(
 
     async with warehouse.acquire() as conn:
         rows = await conn.fetch(
-            'SELECT _id FROM "on_the_record".clicked_item '
-            "WHERE user_id=$1 ORDER BY timestamp DESC LIMIT 6",
+            """
+            SELECT _id
+                FROM (
+                    SELECT DISTINCT ON (_id) _id, timestamp
+                    FROM "on_the_record".clicked_item
+                    WHERE user_id = $1
+                    ORDER BY _id, timestamp DESC
+                ) AS sub
+                ORDER BY timestamp DESC
+                LIMIT 6
+            """,
             user["id"],
         )
         item_ids = list(set([r["_id"] for r in rows]))  # dedupe items
