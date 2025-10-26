@@ -1,5 +1,6 @@
 import { Article } from "@/types/article.types";
 import Image from "next/image";
+import Link from "next/link";
 
 type FeaturedProps = {
   article: Article;
@@ -7,7 +8,10 @@ type FeaturedProps = {
 
 export const Featured = ({ article }: FeaturedProps) => {
   return (
-    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16 bg-gray-50 p-6 rounded-xl transition-transform duration-200 ease-in-out transform hover:scale-105 cursor-pointer hover:bg-gray-100">
+    <Link
+      href={`/articles/${article.id}`}
+      className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16 bg-gray-50 p-6 rounded-xl transition-transform duration-200 ease-in-out transform hover:scale-105 cursor-pointer hover:bg-gray-100"
+    >
       <div className="flex-1 flex flex-col justify-center">
         <div className="flex items-center gap-3 mb-4">
           <p className="text-sm uppercase tracking-wider text-indigo-600 font-display">
@@ -30,13 +34,13 @@ export const Featured = ({ article }: FeaturedProps) => {
 
       <div className="shrink-0">
         <Image
-          src="/images/carousel/carousel-1.jpg"
+          src={`/images/articles/${article.image}`}
           alt="featured"
           width={400}
           height={400}
           className="rounded-lg object-cover shadow-lg"
         />
       </div>
-    </div>
+    </Link>
   );
 };

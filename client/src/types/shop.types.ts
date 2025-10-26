@@ -14,6 +14,7 @@ export type ShopItem = {
   url: string;
   genre: string;
   format: string;
+  image: string;
 };
 
 export type ServerShopItem = {
@@ -25,4 +26,5 @@ export type ServerShopItem = {
   image_url: string;
   genre?: string;
   format?: string;
+  image: string;
 };

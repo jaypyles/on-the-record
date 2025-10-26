@@ -34,13 +34,14 @@ export const ArticlesPage = ({ articles, total }: ArticlesPageProps) => {
       type: selectedType,
     },
     {
-      placeholderData: (previousData: Article[] | undefined) =>
-        previousData || { items: articles, total },
+      placeholderData: (
+        previousData: { items: Article[]; total: number } | undefined
+      ) => previousData || { items: articles, total },
       refetchOnWindowFocus: false,
     }
   );
 
-  const totalPages = Math.ceil(data.total / pageSize);
+  const totalPages = Math.ceil((data?.total || total) / pageSize);
 
   const onClickArticle = (article: Article) => {
     Twillio.segment.track(TrackingEvents.CLICKED_ARTICLE, article);
@@ -202,7 +203,7 @@ export const ArticlesPage = ({ articles, total }: ArticlesPageProps) => {
                   Finding articles that match your criteria.
                 </p>
               </div>
-            ) : data.items && data.items.length > 0 ? (
+            ) : data?.items && data.items.length > 0 ? (
               <div className="flex flex-col space-y-6">
                 {data.items.map((article: Article) => (
                   <div
@@ -211,17 +212,20 @@ export const ArticlesPage = ({ articles, total }: ArticlesPageProps) => {
                     key={article.id}
                   >
                     <div className="flex">
-                      <div className="w-48 h-32 shrink-0">
+                      <div className="w-48 aspect-3/2 shrink-0 relative overflow-hidden bg-gray-200">
                         <img
                           src={`/images/articles/${article.image}`}
                           alt={article.title}
-                          className="w-full h-full object-cover"
+                          className="absolute inset-0 w-full h-full object-cover object-center"
                         />
                       </div>
 
                       <div className="flex-1 p-6">
                         <h3 className="text-xl font-semibold text-gray-900 mb-2 hover:text-indigo-600 transition-colors">
-                          <a href={article.href ?? "#"} className="block">
+                          <a
+                            href={article.href ?? "#"}
+                            className="block truncate"
+                          >
                             {article.title}
                           </a>
                         </h3>
@@ -236,7 +240,7 @@ export const ArticlesPage = ({ articles, total }: ArticlesPageProps) => {
                           </span>
                         </div>
 
-                        <p className="text-gray-600 line-clamp-2">
+                        <p className="text-gray-600 truncate">
                           {article.subTitle}
                         </p>
                       </div>

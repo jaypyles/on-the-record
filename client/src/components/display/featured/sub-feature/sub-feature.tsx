@@ -39,7 +39,7 @@ export const SubFeature = ({ article }: SubFeatureProps) => {
 
       <div className="mt-auto">
         <Image
-          src={article.image ?? ""}
+          src={`/images/articles/${article.image}`}
           alt="subfeature"
           width={400}
           height={400}

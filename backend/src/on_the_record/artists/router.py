@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, Header, Query
 from on_the_record.auth.auth import AuthHelper
 from on_the_record.database import BandItemDB, get_db, get_pg_pool
 from on_the_record.models.artist import BandItem
+from on_the_record.profiles import Profiles
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/artists", tags=["artists"])
@@ -20,6 +21,7 @@ def artist_factory(item: BandItemDB):
         "genre": item.genre,
         "format": item.format,
         "price": item.price,
+        "image": item.image,
     }
 
 
@@ -110,6 +112,7 @@ async def recently_viewed(
             "genre": item.genre,
             "format": item.format,
             "price": item.price,
+            "image": item.image,
         }
         for item in items
     ]

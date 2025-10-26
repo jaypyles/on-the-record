@@ -52,10 +52,21 @@ export function CartButton() {
               <ul className="divide-y divide-gray-200 max-h-64 overflow-y-auto no-scrollbar">
                 {cart.map((item) => (
                   <li key={item.id} className="flex justify-between py-2">
-                    <div>
-                      <p className="font-medium text-black">{item.title}</p>
-                      <p className="text-sm text-black">{item.artist}</p>
-                      <p className="text-sm text-black">Qty: {item.quantity}</p>
+                    <div className="flex gap-3">
+                      <div className="w-12 h-12 shrink-0 relative overflow-hidden bg-gray-200 aspect-square">
+                        <img
+                          src={`/images/items/${item.image}`}
+                          alt={item.title}
+                          className="absolute inset-0 w-full h-full object-cover object-center"
+                        />
+                      </div>
+                      <div>
+                        <p className="font-medium text-black">{item.title}</p>
+                        <p className="text-sm text-black">{item.artist}</p>
+                        <p className="text-sm text-black">
+                          Qty: {item.quantity}
+                        </p>
+                      </div>
                     </div>
                     <div className="flex flex-col items-end text-black">
                       <p>${(item.price * item.quantity).toFixed(2)}</p>

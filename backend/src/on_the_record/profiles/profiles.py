@@ -19,3 +19,15 @@ class Profiles:
             return json["traits"]
 
         return {}
+
+    @classmethod
+    def get_user_traits(cls, user_id: str):
+        user_url = f"{cls.url}/user_id:{user_id}/traits"
+        resp = requests.get(user_url, auth=HTTPBasicAuth(PROFILE_AUTH_TOKEN, ""))
+        resp.raise_for_status()
+        json = resp.json()
+
+        if json["traits"]:
+            return json["traits"]
+
+        return {}

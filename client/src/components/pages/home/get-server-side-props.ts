@@ -16,11 +16,33 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     transformer: SuperJSON,
   });
 
-  const data = await helpers.artistRouter.recentlyViewed.fetch();
+  const artistsData = await helpers.artistRouter.recentlyViewed.fetch();
+
+  let articlesData;
+  if (session?.user) {
+    try {
+      articlesData = await helpers.articleRouter.get.fetch({
+        get_favorite: true,
+        page: 1,
+        size: 4,
+      });
+    } catch (error) {
+      articlesData = await helpers.articleRouter.get.fetch({
+        page: 1,
+        size: 4,
+      });
+    }
+  } else {
+    articlesData = await helpers.articleRouter.get.fetch({
+      page: 1,
+      size: 4,
+    });
+  }
 
   return {
     props: {
-      artists: data.items,
+      artists: artistsData.items,
+      articles: articlesData.items,
       total: 0,
     },
   };

@@ -311,23 +311,36 @@ export const OrderSummary = ({
                 {cart.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between py-2 border-b border-gray-200"
+                    className="flex items-center gap-4 py-4 border-b border-gray-200"
                   >
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-900">
-                        {item.title}
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        {item.artist} • {item.type}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Qty: {item.quantity}
-                      </p>
+                    {/* Item image */}
+                    <div className="w-24 h-24 relative bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                      <img
+                        src={`/images/items/${item.image}`}
+                        alt={item.title}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
                     </div>
-                    <div className="text-right">
-                      <p className="font-medium">
-                        ${(item.price * item.quantity).toFixed(2)}
-                      </p>
+
+                    {/* Item details */}
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <h4 className="text-lg font-semibold text-gray-900">
+                          {item.title}
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          {item.artist} • {item.type}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Qty: {item.quantity}
+                        </p>
+                      </div>
+
+                      <div className="mt-2 text-right">
+                        <p className="text-lg font-medium text-gray-900">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ))}

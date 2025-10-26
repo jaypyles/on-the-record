@@ -9,7 +9,7 @@ export const ArticlePage = ({ article }: ArticlePageProps) => {
     <div className="container mx-auto px-4 py-8">
       <article className="max-w-4xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-4xl text-gray-900 mb-4 font-display">
+          <h1 className="text-6xl text-gray-900 mb-4 font-display">
             {article.title}
           </h1>
           <h2 className="text-xl text-gray-600 mb-4">{article.subTitle}</h2>

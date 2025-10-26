@@ -42,6 +42,7 @@ export const get = publicProcedure
         url: item.image_url,
         genre: item.genre || "",
         format: item.format || "",
+        image: item.image,
       })),
       total: data.total,
     };

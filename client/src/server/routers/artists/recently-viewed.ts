@@ -18,6 +18,8 @@ export const recentlyViewed = autoForwardProcedure.query(async ({ ctx }) => {
     throw new Error((data as any).detail || "Failed to fetch artists");
   }
 
+  console.log(data.items[0]);
+
   return {
     items: data.items.map<ShopItem>((item) => ({
       id: item.id.toString(),
@@ -28,6 +30,7 @@ export const recentlyViewed = autoForwardProcedure.query(async ({ ctx }) => {
       url: item.image_url,
       genre: item.genre || "",
       format: item.format || "",
+      image: item.image,
     })),
     total: data.total,
   };

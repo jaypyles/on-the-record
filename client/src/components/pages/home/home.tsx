@@ -6,23 +6,19 @@ import { ShopItem } from "@/types/shop.types";
 
 interface HomePageProps {
   artists?: ShopItem[];
+  articles?: Article[];
 }
 
-export const HomePage = ({ artists }: HomePageProps) => {
-  const article: Article = {
-    title:
-      "How The Power Of Manifestation Led Elena Rose To Her Debut Album, 'Bendito Verano'",
-    subTitle:
-      "The Venezuelan American artist uses the power of words as a driving force.",
-    author: "Jayden Pyles",
-    created: "10/12/25",
-    genre: "special",
-  };
+export const HomePage = ({ artists, articles }: HomePageProps) => {
+  const featuredArticle = articles?.[0];
+  const subFeatureArticles = articles?.slice(1, 4) || [];
 
   return (
     <div className="flex flex-col text-black max-w-7xl mx-auto pt-4 gap-4">
-      <Featured article={article} />
-      <Articles />
+      {featuredArticle && <Featured article={featuredArticle} />}
+      {subFeatureArticles.length > 0 && (
+        <Articles articles={subFeatureArticles} />
+      )}
 
       <Shop artists={artists} />
     </div>

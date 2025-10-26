@@ -31,6 +31,7 @@ class BandItemDB(Base):
     image_url = Column(String, nullable=False)
     genre = Column(String)
     format = Column(String)
+    image = Column(String)
 
 
 class ArticleDB(Base):

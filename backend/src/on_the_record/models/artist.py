@@ -11,3 +11,4 @@ class BandItem(BaseModel):
     image_url: HttpUrl  # URL to image
     genre: Optional[str] = None  # e.g. "Metal"
     format: Optional[str] = None  # e.g. "CD", "Vinyl", None for merch
+    image: str

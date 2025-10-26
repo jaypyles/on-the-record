@@ -3,6 +3,7 @@ import { useCart } from "@/hooks/use-cart";
 import { Twillio } from "@/lib/services";
 import { ShopItem, ShopItemType } from "@/types/shop.types";
 import { TrackingEvents } from "@/types/track.types";
+import Image from "next/image";
 import Link from "next/link";
 
 interface ShopItemProps {
@@ -12,6 +13,8 @@ interface ShopItemProps {
 export const ShopItemCard = ({ item }: ShopItemProps) => {
   const { onAddToCart } = useCart();
 
+  console.log({ item });
+
   const onClick = () => {
     Twillio.segment.track(TrackingEvents.CLICKED_SHOP_ITEM, item);
   };
@@ -20,15 +23,23 @@ export const ShopItemCard = ({ item }: ShopItemProps) => {
     <Link
       href={`/shop/${item.id}`}
       onClick={onClick}
-      className="flex flex-col bg-gray-50 rounded-xl overflow-hidden max-w-xs relative p-6
+      className="flex flex-col bg-gray-50 rounded-xl overflow-hidden max-w-xs relative p-6 shadow-sm border
    cursor-pointer"
     >
-      <div className="h-56 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
-        {item.type === ShopItemType.VINYL
-          ? "Vinyl Cover"
-          : item.type === ShopItemType.CD
-          ? "CD Cover"
-          : "Shirt Image"}
+      <div className="h-56 w-full bg-gray-100 relative">
+        <Image
+          src={`/images/items/${item.image}`}
+          alt={
+            item.type === ShopItemType.VINYL.toLowerCase()
+              ? "Vinyl Cover"
+              : item.type === ShopItemType.CD.toLowerCase()
+              ? "CD Cover"
+              : "Shirt Image"
+          }
+          fill
+          style={{ objectFit: "contain" }}
+          className="absolute"
+        />
       </div>
 
       <div className="p-4 flex flex-col gap-2">

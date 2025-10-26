@@ -30,7 +30,7 @@ v = Verify()
 app = FastAPI()
 
 tasks = ScheduledTasks()
-tasks.add_task(send_discount_email, seconds=30)
+# tasks.add_task(send_discount_email, seconds=30)
 tasks.start()
 
 app.include_router(artist_router)

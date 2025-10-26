@@ -1,22 +1,10 @@
-band,title,type,url,genre,time,price
-twenty one pilots,trench cd,cd,,rock,2010,19.99
-twenty one pilots,blurryface vinyl,vinyl,,rock,2010,19.99
-twenty one pilots,blurryface t-shirt,merch,,rock,2010,19.99
-nirvana,in utero cd,cd,,grunge,1990,39.99
-twenty one pilots,trench cd,cd,,rock,2010,19.99
-twenty one pilots,blurryface vinyl,vinyl,,rock,2010,19.99
-twenty one pilots,blurryface t-shirt,merch,,rock,2010,19.99
-nirvana,in utero cd,cd,,grunge,1990,39.99
-twenty one pilots,trench cd,cd,,rock,2010,19.99
-twenty one pilots,blurryface vinyl,vinyl,,rock,2010,19.99
-twenty one pilots,blurryface t-shirt,merch,,rock,2010,19.99
-nirvana,in utero cd,cd,,grunge,1990,39.99
-twenty one pilots,trench cd,cd,,rock,2010,19.99
-twenty one pilots,blurryface vinyl,vinyl,,rock,2010,19.99
-twenty one pilots,blurryface t-shirt,merch,,rock,2010,19.99
-nirvana,in utero cd,cd,,grunge,1990,39.99
-twenty one pilots,trench cd,cd,,rock,2010,19.99
-twenty one pilots,blurryface vinyl,vinyl,,rock,2010,19.99
-twenty one pilots,blurryface t-shirt,merch,,rock,2010,19.99
-nirvana,in utero cd,cd,,grunge,1990,39.99
-twenty one pilots,trench cd,cd,,rock,2010,19.99
+band,title,type,url,genre,time,price,image
+Twenty One Pilots,Breach Vinyl,vinyl,,Rock,2010,20.99,breach_vinyl.jpeg
+Djo,Twenty Twenty Cd,cd,,Alternative,2010,8.99,djo_cd.jpg
+Djo,DECIDE Shirt,merch,,Alternative,2020,25.99,djo_shirt.jpg
+Joji,Nectar RED Vinyl,vinyl,,Alternative,2010,59.99,joji_vinyl.jpg
+Tame Impala,Currents Vinyl,vinyl,,Alternative,2010,29.99,tame_impala_vinyl.jpg
+Taylor Swift,Lover CD,cd,,Pop,2020,39.99,taylor_cd.jpg
+The Weeknd,After Hours Shirt,merch,,Pop,2020,30.99,weeknd_shirt.jpg
+Kendrick Lamar,Superbowl Shirt,merch,,Rap,2020,99.99,kendrick_shirt.jpg
+Nirvana,In Utero Shirt,merch,,Grunge,1990,110.99,nirvana_shirt.jpg

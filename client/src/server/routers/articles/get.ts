@@ -1,4 +1,4 @@
-import { publicProcedure } from "@/server/trpc";
+import { autoForwardProcedure } from "@/server/trpc";
 import { Article, ArticleType } from "@/types/article.types";
 import { z } from "zod";
 
@@ -14,7 +14,7 @@ type ServerArticle = {
   genre: string;
 };
 
-export const get = publicProcedure
+export const get = autoForwardProcedure
   .input(
     z.object({
       page: z.number().min(1).optional().default(1),
@@ -22,10 +22,11 @@ export const get = publicProcedure
       title: z.string().optional(),
       type: z.string().optional(),
       id: z.string().optional(),
+      get_favorite: z.boolean().optional(),
     })
   )
-  .query(async ({ input }) => {
-    const { page, size, title, type, id } = input;
+  .query(async ({ input, ctx }) => {
+    const { page, size, title, type, id, get_favorite } = input;
 
     const params = new URLSearchParams();
     params.append("page", page.toString());
@@ -33,9 +34,18 @@ export const get = publicProcedure
     if (title) params.append("title", title);
     if (type) params.append("type", type);
     if (id) params.append("id", id);
+    if (get_favorite) params.append("get_favorite", "true");
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/articles?${params.toString()}`
+      `${process.env.NEXT_PUBLIC_API_URL}/articles?${params.toString()}`,
+      {
+        headers: {
+          ...ctx.forwardHeaders,
+          "Content-Type": "application/json",
+          Cookie: `session_id=${ctx.sessionId}`,
+        },
+        credentials: "include",
+      }
     );
 
     const data: { items: ServerArticle[]; total: number } = await res.json();

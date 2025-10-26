@@ -35,6 +35,7 @@ with open(csv_path, newline="", encoding="utf-8") as csvfile:
                 image_url=image_url,
                 genre=row.get("genre") or None,
                 format=row.get("format") or None,
+                image=row.get("image"),
             )
 
             db_item = BandItemDB(
@@ -45,6 +46,7 @@ with open(csv_path, newline="", encoding="utf-8") as csvfile:
                 image_url=str(item.image_url),
                 genre=item.genre,
                 format=item.format,
+                image=item.image,
             )
 
             session.add(db_item)
@@ -53,6 +55,6 @@ with open(csv_path, newline="", encoding="utf-8") as csvfile:
             print(f"Skipping row due to validation error: {row}")
             print(e)
 
-seed_articles_from_csv(session)
+# seed_articles_from_csv(session)
 session.commit()
 print("Imported CSV into database successfully.")
