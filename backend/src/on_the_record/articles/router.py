@@ -45,8 +45,10 @@ def get_articles(
 
     if favorite:
         query = query.filter(ArticleDB.genre == favorite)
+        query = query.order_by(func.random())
 
-    query = query.order_by(func.random())
+    if size == 4:
+        query = query.order_by(func.random())
 
     total = query.count()
 
