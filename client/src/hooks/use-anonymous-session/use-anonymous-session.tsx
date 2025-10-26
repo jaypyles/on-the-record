@@ -5,7 +5,6 @@ export function useAnonymousSession() {
     if (!window.analytics || !window.analytics.user) return;
 
     const anonymousId = window.analytics.user().anonymousId();
-    console.log({ anonymousId });
     if (!anonymousId) return;
 
     document.cookie = `session_id=${anonymousId}; path=/; max-age=${

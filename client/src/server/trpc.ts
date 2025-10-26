@@ -10,8 +10,6 @@ export const createContext = async ({ req, res }: any) => {
   const cookies = req.headers.cookie ? cookie.parse(req.headers.cookie) : {};
   let sessionId = cookies["session_id"];
 
-  console.log({ sessionId });
-
   return {
     session,
     sessionId,

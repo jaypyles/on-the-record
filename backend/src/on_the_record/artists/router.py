@@ -77,7 +77,11 @@ async def recently_viewed(
 
     if not user:
         query = db.query(BandItemDB).order_by(func.random()).limit(6)
-        return {"user": user, "items": [artist_factory(item) for item in query.all()]}
+        return {
+            "user": user,
+            "items": [artist_factory(item) for item in query.all()],
+            "previously_viewed": False,
+        }
 
     async with warehouse.acquire() as conn:
         rows = await conn.fetch(
@@ -100,12 +104,65 @@ async def recently_viewed(
 
     if not item_ids:
         query = db.query(BandItemDB).order_by(func.random()).limit(6)
-        return {"user": user, "items": [artist_factory(item) for item in query.all()]}
+        return {
+            "user": user,
+            "items": [artist_factory(item) for item in query.all()],
+            "previously_viewed": False,
+        }
 
     items_query = (
         db.query(BandItemDB).filter(BandItemDB.id.in_(item_ids)).order_by(func.random())
     )
     items = items_query.all()
+
+    items_list = [
+        {
+            "id": item.id,
+            "band": item.band,
+            "title": item.title,
+            "item_type": item.item_type,
+            "image_url": item.image_url,
+            "genre": item.genre,
+            "format": item.format,
+            "price": item.price,
+            "image": item.image,
+        }
+        for item in items
+    ]
+
+    return {"user": user, "items": items_list, "previously_viewed": True}
+
+
+@router.get("/you-may-like", response_model=dict)
+async def recently_viewed(
+    db: Session = Depends(get_db),
+    authorization: str = Header(None),
+):
+    auth = AuthHelper(db)
+    user = auth.get_user_from_jwt(authorization)
+    favorite = None
+
+    if not user:
+        query = db.query(BandItemDB).order_by(func.random()).limit(6)
+        return {"user": user, "items": [artist_factory(item) for item in query.all()]}
+
+    user_traits_response = Profiles.get_user_traits(user["id"])
+
+    if user_traits_response and "favorite_item_type" in user_traits_response:
+        favorite = user_traits_response["favorite_item_type"]
+
+    items_query = db.query(BandItemDB)
+
+    if favorite:
+        filtered_query = items_query.filter(BandItemDB.genre == favorite).order_by(
+            func.random()
+        )
+        items = filtered_query.limit(6).all()
+    else:
+        items = items_query.order_by(func.random()).limit(6).all()
+
+    if len(items) < 3:
+        items = items_query.order_by(func.random()).limit(6).all()
 
     items_list = [
         {

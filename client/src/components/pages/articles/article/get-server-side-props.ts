@@ -20,13 +20,16 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   });
 
   try {
-    const data = await helpers.articleRouter.get.fetch({
-      id: id,
-      page: 1,
-      size: 1,
-    });
+    const [articleData, youMayLikeData] = await Promise.all([
+      helpers.articleRouter.get.fetch({
+        id: id,
+        page: 1,
+        size: 1,
+      }),
+      helpers.artistRouter.youMayLike.fetch(),
+    ]);
 
-    if (!data.items || data.items.length === 0) {
+    if (!articleData.items || articleData.items.length === 0) {
       return {
         notFound: true,
       };
@@ -34,7 +37,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     return {
       props: {
-        article: data.items[0],
+        article: articleData.items[0],
+        youMayLikeArtists: youMayLikeData.items || [],
       },
     };
   } catch (error) {

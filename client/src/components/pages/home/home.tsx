@@ -7,9 +7,14 @@ import { ShopItem } from "@/types/shop.types";
 interface HomePageProps {
   artists?: ShopItem[];
   articles?: Article[];
+  previouslyViewed?: boolean;
 }
 
-export const HomePage = ({ artists, articles }: HomePageProps) => {
+export const HomePage = ({
+  artists,
+  articles,
+  previouslyViewed,
+}: HomePageProps) => {
   const featuredArticle = articles?.[0];
   const subFeatureArticles = articles?.slice(1, 4) || [];
 
@@ -20,7 +25,7 @@ export const HomePage = ({ artists, articles }: HomePageProps) => {
         <Articles articles={subFeatureArticles} />
       )}
 
-      <Shop artists={artists} />
+      <Shop artists={artists} previouslyViewed={previouslyViewed} />
     </div>
   );
 };

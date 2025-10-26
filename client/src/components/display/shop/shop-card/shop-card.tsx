@@ -13,8 +13,6 @@ interface ShopItemProps {
 export const ShopItemCard = ({ item }: ShopItemProps) => {
   const { onAddToCart } = useCart();
 
-  console.log({ item });
-
   const onClick = () => {
     Twillio.segment.track(TrackingEvents.CLICKED_SHOP_ITEM, item);
   };

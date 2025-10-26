@@ -51,6 +51,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: {
       artists: artistsData.items,
       articles: articlesData.items,
+      previouslyViewed: artistsData.previously_viewed,
       total: 0,
     },
   };

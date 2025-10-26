@@ -1,2 +1,2 @@
-import { Contact } from "@/components/pages";
-export default Contact;
+import { ContactPage } from "@/components/pages";
+export default ContactPage;

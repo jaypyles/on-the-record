@@ -12,13 +12,15 @@ export const recentlyViewed = autoForwardProcedure.query(async ({ ctx }) => {
     }
   );
 
-  const data: { items: ServerShopItem[]; total: number } = await res.json();
+  const data: {
+    items: ServerShopItem[];
+    total: number;
+    previously_viewed: boolean;
+  } = await res.json();
 
   if (!res.ok) {
     throw new Error((data as any).detail || "Failed to fetch artists");
   }
-
-  console.log(data.items[0]);
 
   return {
     items: data.items.map<ShopItem>((item) => ({
@@ -33,5 +35,6 @@ export const recentlyViewed = autoForwardProcedure.query(async ({ ctx }) => {
       image: item.image,
     })),
     total: data.total,
+    previously_viewed: data.previously_viewed,
   };
 });

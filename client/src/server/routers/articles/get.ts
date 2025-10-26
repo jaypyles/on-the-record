@@ -54,8 +54,6 @@ export const get = autoForwardProcedure
       throw new Error((data as any).detail || "Failed to fetch articles");
     }
 
-    console.log(data.items[0]);
-
     return {
       items: data.items.map<Article>((item) => ({
         id: item.id.toString(),

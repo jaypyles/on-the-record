@@ -1,10 +1,27 @@
+import { YouMayLikeCarousel } from "@/components/display/articles";
 import { Article } from "@/types/article.types";
+
+interface Artist {
+  id: string;
+  band: string;
+  title: string;
+  item_type: string;
+  image_url: string;
+  genre: string;
+  format: string;
+  price: number;
+  image: string;
+}
 
 interface ArticlePageProps {
   article: Article;
+  youMayLikeArtists: Artist[];
 }
 
-export const ArticlePage = ({ article }: ArticlePageProps) => {
+export const ArticlePage = ({
+  article,
+  youMayLikeArtists,
+}: ArticlePageProps) => {
   return (
     <div className="container mx-auto px-4 py-8">
       <article className="max-w-4xl mx-auto">
@@ -58,6 +75,10 @@ export const ArticlePage = ({ article }: ArticlePageProps) => {
           </div>
         </footer>
       </article>
+
+      <div className="w-full flex justify-center">
+        <YouMayLikeCarousel artists={youMayLikeArtists} />
+      </div>
     </div>
   );
 };
