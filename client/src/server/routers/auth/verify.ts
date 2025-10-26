@@ -6,7 +6,6 @@ export const verify = publicProcedure
     z.object({
       email: z.string().email(),
       code: z.string().min(4),
-      password: z.string(),
     })
   )
   .mutation(async ({ input }) => {

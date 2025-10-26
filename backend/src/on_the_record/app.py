@@ -100,6 +100,7 @@ def register(user: RegisterUser, db: sqlite3.Connection = Depends(get_db)):
         )
 
         db.commit()
+        v.send_verification()
         return {"msg": "User registered"}
     except:
         raise HTTPException(status_code=400, detail="User already exists")
@@ -139,28 +140,14 @@ def login(user: LoginUser, request: Request, db: Session = Depends(get_alc_db)):
 
 @app.post("/verify")
 def verify_email(req: VerifyRequest, db: sqlite3.Connection = Depends(get_db)):
-    cur = db.execute(
-        "SELECT id, name, password FROM users WHERE email = ?", (req.email,)
-    )
-
-    row = cur.fetchone()
-
-    verification_check = v.check_verification(req.email, req.code)
+    verification_check = v.check_verification("jaydenpyles0524@gmail.com", req.code)
 
     if verification_check:
-        token = jwt.encode(
-            {"email": req.email, "id": row["id"]}, SECRET_KEY, algorithm=ALGORITHM
-        )
-
-        cur.execute("UPDATE users SET verified = 1 WHERE email = ?", (req.email,))
+        db.execute("UPDATE users SET verified = 1 WHERE email = ?", (req.email,))
 
         return {
             "message": "Email verified successfully!",
             "success": True,
-            "token": token,
-            "email": req.email,
-            "name": row["name"],
-            "id": row["id"],
         }
     else:
         raise HTTPException(status_code=400, detail="Invalid verification code")

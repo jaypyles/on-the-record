@@ -11,9 +11,9 @@ import { Label } from "@/components/ui/label";
 import { useVerifyEmail } from "@/hooks/queries/use-verify-email";
 import { useCart } from "@/hooks/use-cart";
 import { Twillio } from "@/lib/services";
-import { getSession, signIn, signOut } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 type VerificationProps = {
   email: string;
@@ -26,40 +26,44 @@ export const Verification = ({ email, password }: VerificationProps) => {
   const [loading, setLoading] = useState(false);
   const { getCartQuery, loadCart } = useCart();
 
-  const onSuccess = useCallback(async () => {
-    await signOut();
-    await signIn("credentials", {
-      redirect: true,
-      callbackUrl: "/",
-      email,
-      password,
-    });
-  }, [email, password]);
+  const { verify } = useVerifyEmail();
 
-  const { verify } = useVerifyEmail({ onSuccess });
-
-  const handleVerify = async (_e: React.FormEvent) => {
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
-    await verify(email, code, password);
 
-    await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
+    try {
+      const verified = await verify(email, code);
 
-    const session = await getSession();
+      if (!verified.success) {
+        console.error("Verification failed", verified.message);
+        setLoading(false);
+        return;
+      }
 
-    if (session) {
-      const { data } = await getCartQuery.refetch();
-      loadCart(data.items);
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
 
-      Twillio.segment.identifyUser(session, Twillio.segment.getAnonymousId());
+      if (!result?.ok) {
+        throw new Error("Login failed");
+      }
+
+      const session = await getSession();
+      if (session) {
+        const { data } = await getCartQuery.refetch();
+        loadCart(data.items);
+        Twillio.segment.identifyUser(session, Twillio.segment.getAnonymousId());
+      }
+
+      router.push("/");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/");
-
-    setLoading(false);
   };
 
   return (

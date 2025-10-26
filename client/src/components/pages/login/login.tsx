@@ -9,7 +9,7 @@ import { Twillio } from "@/lib/services";
 import { cn } from "@/lib/utils";
 import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -98,17 +98,24 @@ export default function AuthPage() {
         return;
       }
 
-      const loginRes = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
-      if (!loginRes?.error) router.push("/");
+      setVerifying(true);
     } catch (err) {
       setLoading(false);
       setError("Something went wrong.");
     }
   };
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const session = await getSession();
+
+      if (session?.user.jwt) {
+        router.push("/");
+      }
+    };
+
+    checkSession();
+  }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">

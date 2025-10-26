@@ -69,7 +69,7 @@ ${itemLines}
   }
 
   extraContext = `
------- SYSTEM DATA -------
+------ THE USER THAT IS CALLING'S DATA -------
 User Name: ${user.name}
 User Email: ${user.email}
 
