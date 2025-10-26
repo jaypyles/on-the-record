@@ -12,7 +12,7 @@ type ArticlesPageProps = {
 };
 
 export const ArticlesPage = ({ articles, total }: ArticlesPageProps) => {
-  const pageSize = 8;
+  const pageSize = 6;
   const router = useRouter();
   const { type, query, page } = router.query;
 
@@ -213,7 +213,7 @@ export const ArticlesPage = ({ articles, total }: ArticlesPageProps) => {
                     <div className="flex">
                       <div className="w-48 h-32 shrink-0">
                         <img
-                          src={article.image ?? ""}
+                          src={`/images/articles/${article.image}`}
                           alt={article.title}
                           className="w-full h-full object-cover"
                         />

@@ -76,7 +76,7 @@ export function CartButton() {
               </div>
 
               <div className="mt-4 flex justify-between">
-                <Button variant="outline" size="sm" onClick={onClearCart}>
+                <Button size="sm" onClick={onClearCart}>
                   Clear
                 </Button>
                 <Button

@@ -238,6 +238,10 @@ type OrderSummaryProps = {
   handleSubmit: (e: React.FormEvent) => void;
   isLoading?: boolean;
   success: boolean;
+  children?: React.ReactNode;
+  discount?: number;
+  discountApplied: boolean;
+  error: string;
 };
 
 export const OrderSummary = ({
@@ -246,12 +250,19 @@ export const OrderSummary = ({
   handleSubmit,
   isLoading = false,
   success = false,
+  children,
+  discount,
+  discountApplied,
+  error,
 }: OrderSummaryProps) => {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  const fullTotal =
+    discount && discountApplied ? discount * 1.08 : total * 1.08;
 
   if (!isHydrated) {
     return (
@@ -321,10 +332,23 @@ export const OrderSummary = ({
                   </div>
                 ))}
 
+                {children}
+
                 <div className="pt-4 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Subtotal</span>
-                    <span>${total.toFixed(2)}</span>
+                    {discount && discountApplied ? (
+                      <div className="flex gap-2">
+                        <span className="line-through">
+                          ${total.toFixed(2)}
+                        </span>
+                        <span className="text-green-400">
+                          ${discount.toFixed(2)}
+                        </span>
+                      </div>
+                    ) : (
+                      <span>${total.toFixed(2)}</span>
+                    )}
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Shipping</span>
@@ -332,11 +356,29 @@ export const OrderSummary = ({
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Tax</span>
-                    <span>${(total * 0.08).toFixed(2)}</span>
+                    <span>
+                      $
+                      {(
+                        (discount && discountApplied ? discount : total) * 0.08
+                      ).toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between text-lg font-semibold border-t pt-2">
                     <span>Total</span>
-                    <span>${(total * 1.08).toFixed(2)}</span>
+                    <div className="flex justify-between text-sm">
+                      {discount && discountApplied ? (
+                        <div className="flex gap-2">
+                          <span className="line-through">
+                            ${fullTotal.toFixed(2)}
+                          </span>
+                          <span className="text-green-400">
+                            ${fullTotal.toFixed(2)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span>${fullTotal.toFixed(2)}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </>
@@ -352,12 +394,58 @@ export const OrderSummary = ({
               ? "Processing..."
               : success
               ? "Checkout was successful. Sending you back home."
+              : error && !discountApplied
+              ? error
               : `Place Order - $${
-                  cart.length > 0 ? (total * 1.08).toFixed(2) : "0.00"
+                  cart.length > 0 ? fullTotal.toFixed(2) : "0.00"
                 }`}
           </Button>
         </CardContent>
       </Card>
+    </div>
+  );
+};
+
+type DiscountCodeInputProps = {
+  formData: CheckoutFormData;
+  handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onApplyCode: () => void;
+  onBlurInput: () => void;
+  error?: string;
+};
+
+export const DiscountCodeInput = ({
+  formData,
+  handleInputChange,
+  onApplyCode,
+  error,
+  onBlurInput,
+}: DiscountCodeInputProps) => {
+  return (
+    <div>
+      <Label htmlFor="discountCode" className="mb-2">
+        Discount Code
+      </Label>
+      <div className="flex gap-2">
+        <div className="flex flex-col gap-2 w-full">
+          <Input
+            id="discountCode"
+            name="discountCode"
+            value={formData.discountCode}
+            onChange={handleInputChange}
+            placeholder="AB34FF"
+            maxLength={6}
+            minLength={6}
+            required
+            onBlur={onBlurInput}
+          />
+
+          {formData.discountCode && error && (
+            <p className="text-sm text-red-500">{error}</p>
+          )}
+        </div>
+        <Button onClick={onApplyCode}>Apply</Button>
+      </div>
     </div>
   );
 };

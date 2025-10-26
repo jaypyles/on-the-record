@@ -11,6 +11,7 @@ export const useCart = () => {
   const removeFromCartMutation = trpc.cartRouter.remove.useMutation();
   const clearCartMutation = trpc.cartRouter.clear.useMutation();
   const getCartQuery = trpc.cartRouter.get.useQuery();
+  const applyCodeMutation = trpc.cartRouter.verifyCode.useMutation();
 
   const onRemoveFromCart = (id: string) => {
     removeFromCartMutation.mutate({ id });
@@ -31,9 +32,15 @@ export const useCart = () => {
     load(items);
   };
 
-  const onCheckout = () => {
-    checkoutMutation.mutate();
+  const onCheckout = async (discount_code: string) => {
+    return await checkoutMutation.mutateAsync({ discount_code });
   };
+
+  const onVerifyCode = (code: string) => {
+    applyCodeMutation.mutate({ discount_code: code });
+  };
+
+  const { data: discountCodeData } = applyCodeMutation;
 
   return {
     onRemoveFromCart,
@@ -45,5 +52,7 @@ export const useCart = () => {
     getCartQuery,
     loadCart,
     onCheckout,
+    discountCodeData,
+    onVerifyCode,
   };
 };

@@ -13,4 +13,5 @@ export type Article = {
   href?: string;
   image?: string;
   type?: ArticleType;
+  genre: string;
 };

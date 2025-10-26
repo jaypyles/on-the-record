@@ -11,6 +11,7 @@ type ServerArticle = {
   content: string;
   image: string;
   type: string;
+  genre: string;
 };
 
 export const get = publicProcedure
@@ -41,6 +42,8 @@ export const get = publicProcedure
       throw new Error((data as any).detail || "Failed to fetch articles");
     }
 
+    console.log(data.items[0]);
+
     return {
       items: data.items.map<Article>((item) => ({
         id: item.id.toString(),
@@ -52,6 +55,7 @@ export const get = publicProcedure
         image: item.image,
         type: item.type as ArticleType,
         href: `/articles/${item.id}`,
+        genre: item.genre,
       })),
       total: data.total,
     };

@@ -16,6 +16,7 @@ export const HomePage = ({ artists }: HomePageProps) => {
       "The Venezuelan American artist uses the power of words as a driving force.",
     author: "Jayden Pyles",
     created: "10/12/25",
+    genre: "special",
   };
 
   return (

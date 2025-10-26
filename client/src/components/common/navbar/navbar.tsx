@@ -27,7 +27,7 @@ export function Navbar() {
     <header className="fixed top-0 left-0 w-full h-[48px] bg-black z-30 flex items-center px-4">
       <div className="shrink-0">
         <Link href="/" className="text-white font-bold">
-          HOME
+          ON THE RECORD
         </Link>
       </div>
 
@@ -110,7 +110,10 @@ export function Navbar() {
         ) : (
           <>
             <CartButton />
-            <Link href="/login" className="text-white text-sm hover:underline">
+            <Link
+              href="/login"
+              className="text-white text-sm hover:underline hover:bg-white!"
+            >
               Sign in / Register
             </Link>
           </>

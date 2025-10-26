@@ -11,6 +11,7 @@ export const Articles = () => {
       author: "Jayden Pyles",
       type: ArticleType.NEWS,
       href: "/articles/1",
+      genre: "none",
     },
     {
       title: "Rising Stars You Need to Know",
@@ -20,6 +21,7 @@ export const Articles = () => {
       author: "Jayden Pyles",
       type: ArticleType.NEWS,
       href: "/articles/2",
+      genre: "none",
     },
     {
       title: "Vinyl Collector's Guide",
@@ -30,6 +32,7 @@ export const Articles = () => {
       author: "Jayden Pyles",
       type: ArticleType.RELEASE,
       href: "/articles/3",
+      genre: "none",
     },
   ];
 

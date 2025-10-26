@@ -11,4 +11,5 @@ export type CheckoutFormData = {
   expiryDate: string;
   cvv: string;
   nameOnCard: string;
+  discountCode: string;
 };

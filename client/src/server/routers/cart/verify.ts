@@ -1,11 +1,15 @@
 import { autoForwardProcedure } from "@/server/trpc";
-import z from "zod";
+import { z } from "zod";
 
-export const checkout = autoForwardProcedure
-  .input(z.object({ discount_code: z.string().optional() }))
+export const verifyCode = autoForwardProcedure
+  .input(
+    z.object({
+      discount_code: z.string(),
+    })
+  )
   .mutation(async ({ input, ctx }) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/cart/checkout`,
+      `${process.env.NEXT_PUBLIC_API_URL}/cart/checkout/verify-discount`,
       {
         method: "POST",
         headers: {
@@ -21,7 +25,7 @@ export const checkout = autoForwardProcedure
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.detail || "Checkout failed.");
+      throw new Error(data.detail || "Verify code failed.");
     }
 
     return data;

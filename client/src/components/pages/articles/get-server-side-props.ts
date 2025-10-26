@@ -15,7 +15,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   const data = await helpers.articleRouter.get.fetch({
     page: parseInt(page as string),
-    size: 8,
+    size: 6,
     title: query as string,
     type: type as string,
   });
