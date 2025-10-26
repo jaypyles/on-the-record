@@ -198,8 +198,6 @@ def checkout_cart(
 
     total = discount_total if discount_total else total
 
-    cart.items = []
-
     session_id = request.cookies.get("session_id")
 
     order = OrderDB(
@@ -211,6 +209,8 @@ def checkout_cart(
 
     db.add(order)
     db.commit()
+
+    cart.items = []
 
     if discount_key:
         DiscountCodeHelper.redeem_code(db, discount_code, user["id"])

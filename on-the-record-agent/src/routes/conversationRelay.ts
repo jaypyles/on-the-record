@@ -93,6 +93,7 @@ export const setupConversationRelayRoute = (app: ExpressWs.Application) => {
           
           // Get template data and initialize LLM service
           const templateData = await getLocalTemplateData();
+
           llm = new LLMService(phoneNumber, templateData);
           
           // Set call context with callSid (like ramp-agent does)

@@ -55,6 +55,7 @@ class LoginUser(BaseModel):
 
 class RegisterUser(LoginUser):
     name: str
+    phone: str
 
 
 class DbUser(RegisterUser):
@@ -94,8 +95,8 @@ def register(user: RegisterUser, db: sqlite3.Connection = Depends(get_db)):
 
     try:
         db.execute(
-            "INSERT INTO users (id, name, email, password, verified) VALUES (?, ?, ?, ?, ?)",
-            (id, user.name, user.email, hashed, 0),
+            "INSERT INTO users (id, name, email, password, verified, phone) VALUES (?, ?, ?, ?, ?, ?)",
+            (id, user.name, user.email, hashed, 0, user.phone),
         )
 
         db.commit()

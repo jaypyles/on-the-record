@@ -15,6 +15,7 @@ export default function AuthPage() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -86,7 +87,7 @@ export default function AuthPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ email, password, name, phone }),
       });
 
       const data = await res.json();
@@ -222,6 +223,19 @@ export default function AuthPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="phoneNumber" className="mb-2">
+                    Phone
+                  </Label>
+                  <Input
+                    id="phoneNumber"
+                    type="phoneNumber"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+1xxxxxxxxxx"
                     required
                   />
                 </div>

@@ -57,6 +57,7 @@ class UserDB(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+    phone = Column(String, nullable=True)
     verified = Column(Integer, nullable=False, default=0)
 
     def __repr__(self):
