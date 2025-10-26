@@ -13,6 +13,7 @@ from sqlalchemy import (
     Integer,
     String,
     create_engine,
+    func,
 )
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import Session, declarative_base, relationship, sessionmaker
@@ -98,11 +99,15 @@ class DiscountCodeDB(Base):
     key = Column(String(), nullable=False)
 
 
-# class ActionsDB(Base):
-#     __tablename__ = "actions"
+class ActionsDB(Base):
+    __tablename__ = "actions"
 
-#     action = Column(String(6), unique=True, nullable=False)
-#     user = Column(String, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    action = Column(String(50), nullable=False)
+    user_id = Column(String, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = Column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
 
 
 DATABASE_URL = "sqlite:///users.db"
