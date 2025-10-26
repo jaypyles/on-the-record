@@ -94,7 +94,7 @@ async def recently_viewed(
         item_ids = list(set([r["_id"] for r in rows]))  # dedupe items
 
     if not item_ids:
-        query = db.query(BandItem).limit(6)
+        query = db.query(BandItemDB).limit(6)
         return {"user": user, "items": [artist_factory(item) for item in query.all()]}
 
     items_query = db.query(BandItemDB).filter(BandItemDB.id.in_(item_ids))

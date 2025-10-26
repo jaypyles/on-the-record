@@ -31,11 +31,27 @@ class Segment:
 
     @staticmethod
     def track_checkout(
-        user_id: str | None, total: float, items: list[dict], anonymous_id: str | None
+        user_id: str | None,
+        total: float,
+        items: list[dict],
+        order_id: str,
+        anonymous_id: str | None,
     ):
         analytics.track(
             user_id=user_id,
             event=TrackingEvent.CHECKOUT.value,
             properties={"total": total, "items": items},
+            anonymous_id=anonymous_id,
+        )
+
+    @staticmethod
+    def track_discount_used(user_id: str | None, item: dict, anonymous_id: str | None):
+        """
+        Track when a user uses a discount code on a cart.
+        """
+        analytics.track(
+            user_id=user_id,
+            event=TrackingEvent.DISCOUNT_USED.value,
+            properties=item,
             anonymous_id=anonymous_id,
         )

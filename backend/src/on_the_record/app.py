@@ -11,6 +11,9 @@ from on_the_record.cart.helper import CartHelper
 from on_the_record.constants import BYPASS_VERIFY
 from on_the_record.database import UserDB
 from on_the_record.database import get_db as get_alc_db
+from on_the_record.profiles import Profiles
+from on_the_record.scheduled_tasks.scheduled_tasks import ScheduledTasks
+from on_the_record.scheduled_tasks.send_discount_email import send_discount_email
 from on_the_record.sendgrid.sendgrid import SendGrid
 from on_the_record.session import session_router
 from on_the_record.verify.verify import Verify
@@ -26,10 +29,15 @@ v = Verify()
 
 app = FastAPI()
 
+tasks = ScheduledTasks()
+tasks.add_task(send_discount_email, seconds=30)
+tasks.start()
+
 app.include_router(artist_router)
 app.include_router(article_router)
 app.include_router(cart_router)
 app.include_router(session_router)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -109,6 +117,8 @@ def login(user: LoginUser, request: Request, db: Session = Depends(get_alc_db)):
 
     user_id = user_obj.id
     session_id = request.cookies.get("session_id")
+
+    Profiles.get_user_audience(user_id)
 
     if session_id:
         CartHelper.merge_carts(db, session_id, user_id)

@@ -16,6 +16,7 @@ dependencies = [
     "sqlalchemy>=2.0.44",
     "asyncpg>=0.30.0",
     "segment-analytics-python>=2.3.4",
+    "apscheduler>=3.11.0",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"

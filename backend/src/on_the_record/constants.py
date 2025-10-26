@@ -5,12 +5,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "")
-FROM_EMAIL = os.getenv("EMAIL_FROM", "")
+FROM_EMAIL = os.getenv("FROM_EMAIL", "")
 
 SEGMENT_WRITE_TOKEN = os.getenv("SEGMENT_WRITE_TOKEN", "")
 ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "")
 AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
 SERVICE_SID = os.getenv("VERIFY_SERVICE_SID", "")
+SPACE_ID = os.getenv("SPACE_ID", "")
+PROFILE_AUTH_TOKEN = os.getenv("PROFILE_AUTH_TOKEN", "")
 
 BYPASS_VERIFY = os.getenv("BYPASS_VERIFY", "false").lower() == "true"
 

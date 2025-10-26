@@ -1,12 +1,12 @@
 from typing import Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Body, Depends, HTTPException, Request, Response
 from on_the_record.auth.auth import AuthHelper
+from on_the_record.code import DiscountCodeHelper
 from on_the_record.database import BandItemDB, CartDB, OrderDB, get_db
 from on_the_record.factories.database_factory import DatabaseFactory
 from on_the_record.segment import Segment
-from sqlalchemy.exc import IdentifierError
 from sqlalchemy.orm import Session
 
 from .models import CartOut, ItemOut
@@ -167,6 +167,7 @@ def checkout_cart(
     response: Response,
     db: Session = Depends(get_db),
     user: Optional[dict] = Depends(AuthHelper.get_optional_current_user),
+    discount_code: str = Body(..., embed=True),
 ):
     cart = get_or_create_cart(db, request, response, user)
 
@@ -178,10 +179,24 @@ def checkout_cart(
         .filter(BandItemDB.id.in_([i["id"] for i in cart.items]))
         .all()
     )
+
     total = sum(
         item.price * next((c["quantity"] for c in cart.items if c["id"] == item.id), 1)
         for item in items_db
     )
+
+    discount_total = 0
+    discount_key = None
+
+    if discount_code:
+        discount_key = DiscountCodeHelper.is_valid(db, discount_code)
+
+        if not discount_key:
+            raise HTTPException(400, detail="Invalid or already redeemed code.")
+
+        discount_total = DiscountCodeHelper.apply_code(total, discount_key)
+
+    total = discount_total if discount_total else total
 
     cart.items = []
 
@@ -197,11 +212,66 @@ def checkout_cart(
     db.add(order)
     db.commit()
 
+    if discount_key:
+        DiscountCodeHelper.redeem_code(db, discount_code, user["id"])
+
     Segment.track_checkout(
         user["id"] if user else None,
         total,
         [DatabaseFactory.artist_factory(i) for i in items_db],
+        order.id,
         session_id,
     )
 
+    if discount_key:
+        Segment.track_discount_used(
+            user["id"] if user else None,
+            {"key": discount_key, "order": order.id},
+            session_id,
+        )
+
     return {"message": "Checkout successful", "total": total}
+
+
+@router.post("/checkout/verify-discount")
+def verify_discount(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    user: Optional[dict] = Depends(AuthHelper.get_optional_current_user),
+    discount_code: str = Body(..., embed=True),
+):
+    DiscountCodeHelper.create_code(db, "20_OFF")
+    cart = get_or_create_cart(db, request, response, user)
+
+    if not cart.items:
+        raise HTTPException(status_code=400, detail="Cart is empty")
+
+    items_db = (
+        db.query(BandItemDB)
+        .filter(BandItemDB.id.in_([i["id"] for i in cart.items]))
+        .all()
+    )
+
+    total = sum(
+        item.price * next((c["quantity"] for c in cart.items if c["id"] == item.id), 1)
+        for item in items_db
+    )
+
+    discount_key = DiscountCodeHelper.is_valid(db, discount_code)
+
+    if not discount_key:
+        return {
+            "valid": False,
+            "message": "Invalid or already redeemed code",
+            "total": total,
+        }
+
+    discounted_total = DiscountCodeHelper.apply_code(total, discount_key)
+
+    return {
+        "valid": True,
+        "discount_code": discount_code,
+        "original_total": total,
+        "discounted_total": discounted_total,
+    }

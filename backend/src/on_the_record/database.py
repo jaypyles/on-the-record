@@ -44,6 +44,8 @@ class ArticleDB(Base):
     content = Column(String, nullable=False)
     image = Column(String)
     type = Column(String)
+    genre = Column(String)
+    content = Column(String)
 
 
 class UserDB(Base):
@@ -80,6 +82,26 @@ class OrderDB(Base):
     items = Column(MutableList.as_mutable(JSON), nullable=False, default=list)
     total = Column(Float, nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+
+class DiscountCodeDB(Base):
+    __tablename__ = "discount_codes"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    code = Column(String(6), unique=True, nullable=False)
+    redeemed_by = Column(
+        String, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    redeemed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    key = Column(String(), nullable=False)
+
+
+# class ActionsDB(Base):
+#     __tablename__ = "actions"
+
+#     action = Column(String(6), unique=True, nullable=False)
+#     user = Column(String, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
 
 
 DATABASE_URL = "sqlite:///users.db"

@@ -2,7 +2,7 @@ import csv
 
 from on_the_record.database import BandItemDB
 from on_the_record.models.artist import BandItem
-from on_the_record.scripts.seed_articles import seed_articles
+from on_the_record.scripts.seed_articles import seed_articles_from_csv
 from pydantic import ValidationError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -53,6 +53,6 @@ with open(csv_path, newline="", encoding="utf-8") as csvfile:
             print(f"Skipping row due to validation error: {row}")
             print(e)
 
-seed_articles(session)
+seed_articles_from_csv(session)
 session.commit()
 print("Imported CSV into database successfully.")

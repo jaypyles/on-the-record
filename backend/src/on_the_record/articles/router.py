@@ -42,6 +42,7 @@ def get_articles(
                 "content": item.content,
                 "image": item.image,
                 "type": item.type,
+                "genre": item.genre,
             }
             for item in items
         ],
