@@ -21,16 +21,18 @@ export const get = publicProcedure
       size: z.number().min(1).max(100).optional().default(20),
       title: z.string().optional(),
       type: z.string().optional(),
+      id: z.string().optional(),
     })
   )
   .query(async ({ input }) => {
-    const { page, size, title, type } = input;
+    const { page, size, title, type, id } = input;
 
     const params = new URLSearchParams();
     params.append("page", page.toString());
     params.append("size", size.toString());
     if (title) params.append("title", title);
     if (type) params.append("type", type);
+    if (id) params.append("id", id);
 
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/articles?${params.toString()}`

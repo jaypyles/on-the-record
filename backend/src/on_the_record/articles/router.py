@@ -14,6 +14,7 @@ def get_articles(
     size: int = Query(20, ge=1, le=100),
     title: Optional[str] = Query(None),
     type: Optional[str] = Query(None),
+    id: Optional[str] = Query(None),
 ):
     """
     Search articles with optional title filter and pagination.
@@ -25,6 +26,9 @@ def get_articles(
 
     if type and type.lower() != "all":
         query = query.filter(ArticleDB.type == type.lower())
+
+    if id:
+        query = query.filter(ArticleDB.id == id)
 
     total = query.count()
 
