@@ -32,14 +32,15 @@ export const Featured = ({ article }: FeaturedProps) => {
         </p>
       </div>
 
-      <div className="shrink-0">
-        <Image
-          src={`/images/articles/${article.image}`}
-          alt="featured"
-          width={400}
-          height={400}
-          className="rounded-lg object-cover shadow-lg"
-        />
+      <div className="shrink-0 w-full lg:w-96">
+        <div className="relative w-full aspect-video overflow-hidden rounded-lg shadow-lg bg-gray-200">
+          <Image
+            src={`/images/articles/${article.image}`}
+            alt="featured"
+            fill
+            className="object-cover object-center"
+          />
+        </div>
       </div>
     </Link>
   );

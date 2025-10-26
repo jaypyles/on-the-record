@@ -6,6 +6,7 @@ from on_the_record.auth.auth import AuthHelper
 from on_the_record.database import BandItemDB, get_db, get_pg_pool
 from on_the_record.models.artist import BandItem
 from on_the_record.profiles import Profiles
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/artists", tags=["artists"])
@@ -75,7 +76,7 @@ async def recently_viewed(
     user = auth.get_user_from_jwt(authorization)
 
     if not user:
-        query = db.query(BandItemDB).limit(6)
+        query = db.query(BandItemDB).order_by(func.random()).limit(6)
         return {"user": user, "items": [artist_factory(item) for item in query.all()]}
 
     async with warehouse.acquire() as conn:
@@ -95,11 +96,15 @@ async def recently_viewed(
         )
         item_ids = list(set([r["_id"] for r in rows]))  # dedupe items
 
+    print(f"Item Ids: {item_ids}")
+
     if not item_ids:
-        query = db.query(BandItemDB).limit(6)
+        query = db.query(BandItemDB).order_by(func.random()).limit(6)
         return {"user": user, "items": [artist_factory(item) for item in query.all()]}
 
-    items_query = db.query(BandItemDB).filter(BandItemDB.id.in_(item_ids))
+    items_query = (
+        db.query(BandItemDB).filter(BandItemDB.id.in_(item_ids)).order_by(func.random())
+    )
     items = items_query.all()
 
     items_list = [
