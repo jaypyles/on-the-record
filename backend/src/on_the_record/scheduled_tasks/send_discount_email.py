@@ -32,7 +32,8 @@ def send_discount_email(user: UserDB, db: Session):
             "jaydenpyles0524@gmail.com",
             "d-1ca6908368bd4b2c8435cf5ea97fdfe3",
             dynamic_data,
-            "Testing",
+            "You've earned a discount on your next purchase!",
+            from_email="customerservice@readontherecord.com",
         )
 
         db.add(ActionsDB(action="discount_sent", user_id=user.id))

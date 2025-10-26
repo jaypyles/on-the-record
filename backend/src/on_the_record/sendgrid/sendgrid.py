@@ -28,9 +28,10 @@ class SendGrid:
         template_id: str,
         dynamic_data: dict = None,
         subject: str = "",
+        from_email: str = "verify@readontherecord.com",
     ):
         mail = Mail(
-            from_email=Email(self.from_mail),
+            from_email=Email(from_email),
             to_emails=To(to_email),
             subject=subject,
         )

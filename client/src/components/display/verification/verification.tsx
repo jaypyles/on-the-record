@@ -9,7 +9,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useVerifyEmail } from "@/hooks/queries/use-verify-email";
-import { signIn, signOut } from "next-auth/react";
+import { useCart } from "@/hooks/use-cart";
+import { Twillio } from "@/lib/services";
+import { getSession, signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 
 type VerificationProps = {
@@ -18,8 +21,10 @@ type VerificationProps = {
 };
 
 export const Verification = ({ email, password }: VerificationProps) => {
+  const router = useRouter();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const { getCartQuery, loadCart } = useCart();
 
   const onSuccess = useCallback(async () => {
     await signOut();
@@ -36,15 +41,38 @@ export const Verification = ({ email, password }: VerificationProps) => {
   const handleVerify = async (_e: React.FormEvent) => {
     setLoading(true);
     await verify(email, code, password);
+
+    await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+    const session = await getSession();
+
+    if (session) {
+      const { data } = await getCartQuery.refetch();
+      loadCart(data.items);
+
+      Twillio.segment.identifyUser(session, Twillio.segment.getAnonymousId());
+    }
+
+    router.push("/");
+
     setLoading(false);
   };
 
   return (
-    <Card className="max-w-md w-full">
+    <Card className="max-w-lg w-full">
       <CardHeader>
         <CardTitle>Email Verification</CardTitle>
       </CardHeader>
       <CardContent>
+        <p className="mb-8">
+          A verification code has been sent to{" "}
+          <b>{email || "jaydenpyles0524@gmail.com"}.</b>
+        </p>
+
         <form onSubmit={handleVerify} className="space-y-4">
           <div>
             <Label htmlFor="code" className="mb-2">
