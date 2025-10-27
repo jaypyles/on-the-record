@@ -63,7 +63,7 @@ export const YouMayLikeCarousel = ({ artists }: YouMayLikeCarouselProps) => {
   return (
     <div className="mt-12 w-3/4">
       <h2 className="text-3xl font-display text-gray-900 mb-6 text-center">
-        YOU MAY LIKE
+        YOU MAY ALSO LIKE
       </h2>
       <Carousel
         opts={{

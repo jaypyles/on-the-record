@@ -22,6 +22,7 @@ type VerificationProps = {
 
 export const Verification = ({ email, password }: VerificationProps) => {
   const router = useRouter();
+  const { new_register } = router.query;
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const { getCartQuery, loadCart } = useCart();
@@ -33,7 +34,7 @@ export const Verification = ({ email, password }: VerificationProps) => {
     setLoading(true);
 
     try {
-      const verified = await verify(email, code);
+      const verified = await verify(email, code, Boolean(new_register));
 
       if (!verified.success) {
         console.error("Verification failed", verified.message);

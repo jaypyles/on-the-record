@@ -17,5 +17,11 @@ export const get = autoForwardProcedure.query(async ({ ctx }) => {
     throw new Error(data.detail || "Getting cart failed.");
   }
 
-  return data;
+  return {
+    items: data.items.map(({ band, item_type, ...rest }: any) => ({
+      ...rest,
+      artist: band,
+      type: item_type,
+    })),
+  };
 });

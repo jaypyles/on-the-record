@@ -382,7 +382,7 @@ export const OrderSummary = ({
                       {discount && discountApplied ? (
                         <div className="flex gap-2">
                           <span className="line-through">
-                            ${total.toFixed(2)}
+                            ${(total * 1.08).toFixed(2)}
                           </span>
                           <span className="text-green-400">
                             ${fullTotal.toFixed(2)}

@@ -156,7 +156,9 @@ export const ContactInformation = () => {
         <CardContent className="space-y-4">
           <div>
             <h3 className="font-semibold mb-2 ">Email</h3>
-            <p className="text-muted-foreground">cs@readontherecord.com</p>
+            <p className="text-muted-foreground">
+              customerservice@readontherecord.com
+            </p>
           </div>
           <div>
             <h3 className="font-semibold mb-2">Phone</h3>

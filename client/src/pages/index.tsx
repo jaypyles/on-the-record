@@ -1,5 +1,6 @@
 import { HomePage } from "@/components/pages";
 import { getServerSideProps as homeGetServerSideProps } from "@/components/pages/home/get-server-side-props";
+import { useAnonymousSession } from "@/hooks/use-anonymous-session";
 import { Article } from "@/types/article.types";
 import { ShopItem } from "@/types/shop.types";
 

@@ -1,11 +1,14 @@
 import { Checkout } from "@/components/display/checkout";
+import { NewlyRegisteredModal } from "@/components/display/modals";
 import { useCart } from "@/hooks/use-cart";
 import type { CheckoutFormData } from "@/types/checkout.types";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useState } from "react";
 
 export const CheckoutPage = () => {
   const router = useRouter();
+  const { status } = useSession();
   const { cart, total, onCheckout, clear, discountCodeData, onVerifyCode } =
     useCart();
   const [formData, setFormData] = useState<CheckoutFormData>({
@@ -28,6 +31,8 @@ export const CheckoutPage = () => {
   const [discountCodeError, setDiscountCodeError] = useState<string>("");
   const [discountCodeTotal, setDiscountCodeTotal] = useState<number>(0);
   const [checkoutError, setCheckoutError] = useState<string>("");
+  const [showNewlyRegisteredModal, setShowNewlyRegisteredModal] =
+    useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,6 +47,15 @@ export const CheckoutPage = () => {
 
   const onBlurDiscountCode = () => {
     setDiscountCodeError("");
+  };
+
+  const handleSignUp = () => {
+    setShowNewlyRegisteredModal(false);
+    router.push("/login?new_register=true");
+  };
+
+  const handleContinueAsGuest = () => {
+    setShowNewlyRegisteredModal(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,6 +87,16 @@ export const CheckoutPage = () => {
       setDiscountCodeTotal(discountCodeData.discounted_total);
     }
   }, [discountCodeData]);
+
+  useEffect(() => {
+    if (status === "unauthenticated" && cart.length > 0) {
+      const timer = setTimeout(() => {
+        setShowNewlyRegisteredModal(true);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [status, cart.length]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -127,6 +151,12 @@ export const CheckoutPage = () => {
           </Checkout.OrderSummary>
         </div>
       </div>
+
+      <NewlyRegisteredModal
+        isOpen={showNewlyRegisteredModal}
+        onClose={handleContinueAsGuest}
+        onSignUp={handleSignUp}
+      />
     </div>
   );
 };

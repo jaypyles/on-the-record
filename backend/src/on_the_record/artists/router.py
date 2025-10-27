@@ -154,9 +154,9 @@ async def recently_viewed(
     items_query = db.query(BandItemDB)
 
     if favorite:
-        filtered_query = items_query.filter(BandItemDB.genre == favorite).order_by(
-            func.random()
-        )
+        filtered_query = items_query.filter(
+            func.lower(BandItemDB.genre) == favorite.lower()
+        ).order_by(func.random())
         items = filtered_query.limit(6).all()
     else:
         items = items_query.order_by(func.random()).limit(6).all()

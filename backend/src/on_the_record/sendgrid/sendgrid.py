@@ -1,6 +1,8 @@
+from on_the_record.code import DiscountCodeHelper
 from on_the_record.constants import FROM_EMAIL, SENDGRID_API_KEY
 from sendgrid import From, SendGridAPIClient
 from sendgrid.helpers.mail import Content, Email, Mail, To
+from sqlalchemy.orm import Session
 
 
 class SendGrid:
@@ -46,3 +48,14 @@ class SendGrid:
 
         response = self.client.send(mail_json)
         return response
+
+    def send_10_off_code(self, db: Session):
+        code = DiscountCodeHelper.create_code(db, "10_OFF")
+        data = {"discountCode": code.code, "unsubscribeLink": "test"}
+        self.send_template_email(
+            "jaydenpyles0524@gmail.com",
+            "d-3d536f000cf34dd9968ea5969b7a91ea",
+            data,
+            subject="Thanks for Registering!",
+            from_email="customerservice@readontherecord.com",
+        )

@@ -13,4 +13,5 @@ class DatabaseFactory:
             "genre": item.genre,
             "format": item.format,
             "price": item.price,
+            "image": item.image,
         }

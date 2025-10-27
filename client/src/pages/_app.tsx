@@ -12,7 +12,6 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   useAnonymousSession();
-
   return (
     <SessionProvider session={session}>
       <TRPCProvider dehydratedState={pageProps.trpcState}>

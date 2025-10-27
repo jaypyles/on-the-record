@@ -48,9 +48,15 @@ export const ShopItemCard = ({ item }: ShopItemProps) => {
           <span className="text-indigo-600 font-bold">
             ${item.price.toFixed(2)}
           </span>
-          <span className="text-xs bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full font-medium">
-            {item.type}
-          </span>
+
+          <div className="flex gap-2">
+            <span className="text-xs bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full font-medium capitalize">
+              {item.type}
+            </span>
+            <span className="text-xs bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full font-medium">
+              {item.genre}
+            </span>
+          </div>
         </div>
       </div>
       <Button

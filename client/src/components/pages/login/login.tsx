@@ -60,7 +60,10 @@ export default function AuthPage() {
       }
 
       const { data } = await getCartQuery.refetch();
-      loadCart(data.items);
+
+      if (data) {
+        loadCart(data.items);
+      }
 
       Twillio.segment.identifyUser(session, Twillio.segment.getAnonymousId());
     }

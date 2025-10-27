@@ -13,6 +13,7 @@ class ItemOut(BaseModel):
     genre: Optional[str]
     format: Optional[str]
     quantity: Optional[int] = None
+    image: str
 
     model_config = {"from_attributes": True}
 

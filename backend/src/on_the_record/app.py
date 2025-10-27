@@ -1,5 +1,6 @@
 import sqlite3
 import uuid
+from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,6 +20,7 @@ from on_the_record.session import session_router
 from on_the_record.verify.verify import Verify
 from passlib.hash import bcrypt
 from pydantic import BaseModel
+from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 SECRET_KEY = "supersecret"
@@ -65,6 +67,7 @@ class DbUser(RegisterUser):
 class VerifyRequest(BaseModel):
     email: str
     code: str
+    new_register: Optional[bool] = None
 
 
 def get_db():
@@ -120,6 +123,8 @@ def login(user: LoginUser, request: Request, db: Session = Depends(get_alc_db)):
     user_id = user_obj.id
     session_id = request.cookies.get("session_id")
 
+    print(f"SESSION_ID: {session_id}")
+
     if session_id:
         CartHelper.merge_carts(db, session_id, user_id)
 
@@ -139,11 +144,20 @@ def login(user: LoginUser, request: Request, db: Session = Depends(get_alc_db)):
 
 
 @app.post("/verify")
-def verify_email(req: VerifyRequest, db: sqlite3.Connection = Depends(get_db)):
+def verify_email(
+    req: VerifyRequest,
+    db_session: Session = Depends(get_alc_db),
+):
     verification_check = v.check_verification("jaydenpyles0524@gmail.com", req.code)
 
     if verification_check:
-        db.execute("UPDATE users SET verified = 1 WHERE email = ?", (req.email,))
+        stmt = update(UserDB).where(UserDB.email == req.email).values(verified=True)
+
+        db_session.execute(stmt)
+        db_session.commit()
+
+        if req.new_register:
+            sg.send_10_off_code(db_session)
 
         return {
             "message": "Email verified successfully!",
